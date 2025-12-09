@@ -3,7 +3,7 @@ import { initializeApp } from "firebase/app";
 import { getAuth } from "firebase/auth";
 import { getDatabase } from "firebase/database";
 
-export const BACKEND_URL = "https://callcenter-baclend.onrender.com";
+export const BACKEND_URL = "https://backend-ouwl.onrender.com";
 
 // ⚠️ IMPORTANT: You MUST fill in the API Key, App ID, and Sender ID yourself!
 // These values are public but required for the client-side SDKs to function.
@@ -36,4 +36,5 @@ export const auth = getAuth(app);
 
 // Initialize and export Firebase Realtime Database
 export const database = getDatabase(app);
+
 
