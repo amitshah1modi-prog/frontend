@@ -128,7 +128,14 @@ export default function UserDashboardPage() {
         if (!notes.trim()) {
             setSaveMessage('Error: Notes cannot be empty.');
             setTimeout(() => setSaveMessage(''), 3000);
+            // load notes back
+useEffect(() => {
+  const saved = localStorage.getItem("activeNotes");
+  if(saved) setNotes(saved);
+}, []);
+
             return;
+            
         }
         
         if (!selectedAddressId && userAddresses.length > 0) {
@@ -540,5 +547,6 @@ export default function UserDashboardPage() {
         </div>
     );
 }
+
 
 
