@@ -311,13 +311,10 @@ export default function UserServicesPage() {
     const location = useLocation();
     const navigate = useNavigate();
 
-   const params = new URLSearchParams(location.search);
-
-const ticketId = location.state?.ticketId;
-const requestDetails = location.state?.requestDetails;
-const selectedAddressId = location.state?.selectedAddressId;
-const phoneNumber = location.state?.phoneNumber || params.get("phoneNumber");
-
+    const ticketId = location.state?.ticketId;
+    const requestDetails = location.state?.requestDetails;
+    const selectedAddressId = location.state?.selectedAddressId;
+    const phoneNumber = location.state?.phoneNumber;
 
     // 🚀 NEW: Store multiple selected services with their subcategories
     const [selectedServices, setSelectedServices] = useState({}); // { serviceName: [subcategories] }
