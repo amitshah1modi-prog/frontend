@@ -3,7 +3,7 @@ import { useLocation, useNavigate } from 'react-router-dom';
 import { getAuth } from 'firebase/auth';
 import { app } from '../config';
 
-const API_BASE_URL = 'https://callcenter-baclend.onrender.com';
+const API_BASE_URL = 'https://backend-ouwl.onrender.com';
 const auth = getAuth(app);
 
 const PhoneIcon = () => <span style={{ fontSize: '1.25rem' }}>📞</span>;
