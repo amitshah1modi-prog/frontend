@@ -1,41 +1,44 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom'; 
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
+
+// Using a placeholder URL internally to resolve the 'Could not resolve' error.
 import { BACKEND_URL } from '../config';
 
 export default function UserDashboardPage() {
 
-    // -----------------------------------------
-    //           LOCALSTORAGE RESTORE
-    // -----------------------------------------
-    const LS_NOTES = "dash_notes";
-    const LS_ADDRESS = "dash_selected_address";
-    const LS_ORDERS = "dash_assigned_orders";
-
-    // Initial load from storage
-    const savedNotes = localStorage.getItem(LS_NOTES) || "";
-    const savedAddressId = localStorage.getItem(LS_ADDRESS) || null;
-    let savedOrders = [];
-    try { savedOrders = JSON.parse(localStorage.getItem(LS_ORDERS)) || []; } catch {}
-
-    // -----------------------------------------
-
+    // 1. URL PARAMETERS (e.g., /dashboard/1)
     const { userId } = useParams();
+
+    // 2. QUERY PARAMETERS (e.g., ?phoneNumber=...)
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const phoneNumber = queryParams.get('phoneNumber'); 
+    const phoneNumber = queryParams.get('phoneNumber');
+
+    // 👉 KEYS PER CALL (PER PHONE)
+    const notesKey = phoneNumber ? `notes_${phoneNumber}` : 'notes_unknown';
+    const addressKey = phoneNumber ? `address_${phoneNumber}` : 'address_unknown';
 
     const navigate = useNavigate();
-    const [notes, setNotes] = useState(savedNotes);
+
+    // ✅ INITIALISE FROM LOCALSTORAGE *FOR THIS PHONE ONLY*
+    const [notes, setNotes] = useState(
+        phoneNumber ? localStorage.getItem(notesKey) || '' : ''
+    );
+
     const [isSaving, setIsSaving] = useState(false);
     const [saveMessage, setSaveMessage] = useState('');
     const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
     const [subscriptionStatus] = useState('Premium');
 
+    // STATE FOR ADDRESS MANAGEMENT
     const [userAddresses, setUserAddresses] = useState([]);
-    const [selectedAddressId, setSelectedAddressId] = useState(savedAddressId);
+    const [selectedAddressId, setSelectedAddressId] = useState(
+        phoneNumber ? localStorage.getItem(addressKey) || null : null
+    );
     const [addressFetchMessage, setAddressFetchMessage] = useState('Fetching addresses...');
 
-    const [assignedOrders, setAssignedOrders] = useState(savedOrders);
+    // 🚀 NEW STATE: Assigned Orders
+    const [assignedOrders, setAssignedOrders] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(false);
 
     // CLOCK
@@ -44,16 +47,19 @@ export default function UserDashboardPage() {
         return () => clearInterval(timer);
     }, []);
 
-    // SAVE NOTES TO LOCALSTORAGE WHEN TYPED
+    // ✅ AUTO-SAVE NOTES FOR THIS PHONE
     useEffect(() => {
-        localStorage.setItem(LS_NOTES, notes);
-    }, [notes]);
+        if (!phoneNumber) return;
+        localStorage.setItem(notesKey, notes);
+    }, [notes, phoneNumber, notesKey]);
 
-    // SAVE SELECTED ADDRESS
+    // ✅ AUTO-SAVE SELECTED ADDRESS FOR THIS PHONE
     useEffect(() => {
-        if (selectedAddressId)
-            localStorage.setItem(LS_ADDRESS, selectedAddressId);
-    }, [selectedAddressId]);
+        if (!phoneNumber) return;
+        if (selectedAddressId) {
+            localStorage.setItem(addressKey, selectedAddressId);
+        }
+    }, [selectedAddressId, phoneNumber, addressKey]);
 
     // EFFECT 1: Fetch addresses
     useEffect(() => {
@@ -64,25 +70,35 @@ export default function UserDashboardPage() {
             }
 
             try {
-                const response = await fetch(`${BACKEND_URL}/call/address/${userId}`); 
-                if (!response.ok) throw new Error(`Failed to fetch addresses: ${response.statusText}`);
+                const response = await fetch(`${BACKEND_URL}/call/address/${userId}`);
+
+                if (!response.ok) {
+                    throw new Error(`Failed to fetch addresses: ${response.statusText}`);
+                }
 
                 const result = await response.json();
                 const addresses = result.addresses;
 
-                setUserAddresses(addresses);
-
                 if (addresses.length > 0) {
-                    // Restore user-selected address OR default to 1st
-                    if (savedAddressId && addresses.some(a => a.address_id == savedAddressId)) {
-                        setSelectedAddressId(savedAddressId);
+                    setUserAddresses(addresses);
+
+                    // 🔁 Try to restore saved address for this phoneNumber
+                    if (phoneNumber) {
+                        const storedId = localStorage.getItem(addressKey);
+                        if (storedId && addresses.some(a => String(a.address_id) === String(storedId))) {
+                            setSelectedAddressId(storedId);
+                        } else {
+                            setSelectedAddressId(addresses[0].address_id);
+                        }
                     } else {
                         setSelectedAddressId(addresses[0].address_id);
                     }
+
                     setAddressFetchMessage(`${addresses.length} addresses loaded.`);
                 } else {
-                    setSelectedAddressId(null);
                     setAddressFetchMessage('No addresses found for this user.');
+                    setUserAddresses([]);
+                    setSelectedAddressId(null);
                 }
 
             } catch (error) {
@@ -92,26 +108,25 @@ export default function UserDashboardPage() {
         };
 
         fetchAddresses();
-    }, [userId]);
+    }, [userId, phoneNumber, addressKey]);
 
-    // FETCH ASSIGNED ORDERS
+    // 🚀 EFFECT 2: Fetch Assigned Orders for this Phone Number
     useEffect(() => {
         const fetchAssignedOrders = async () => {
             if (!phoneNumber) return;
 
             setOrdersLoading(true);
             try {
-                const response = await fetch(`${BACKEND_URL}/call/orders/assigned?phoneNumber=${phoneNumber}`);
+                const response = await fetch(
+                    `${BACKEND_URL}/call/orders/assigned?phoneNumber=${phoneNumber}`
+                );
+
                 if (response.ok) {
                     const data = await response.json();
-                    const finalOrders = data.orders || [];
-
-                    // Save to localStorage
-                    localStorage.setItem(LS_ORDERS, JSON.stringify(finalOrders));
-
-                    setAssignedOrders(finalOrders);
+                    setAssignedOrders(data.orders || []);
+                } else {
+                    console.error("Failed to fetch assigned orders");
                 }
-
             } catch (error) {
                 console.error("Error fetching orders:", error);
             } finally {
@@ -122,9 +137,9 @@ export default function UserDashboardPage() {
         fetchAssignedOrders();
     }, [phoneNumber]);
 
-    // CANCEL ORDER
+    // 🚀 FUNCTION: Cancel an Assigned Order
     const handleCancelOrder = async (orderId) => {
-        if(!window.confirm("Are you sure the customer wants to cancel this order?")) return;
+        if (!window.confirm("Are you sure the customer wants to cancel this order?")) return;
 
         try {
             const response = await fetch(`${BACKEND_URL}/call/orders/cancel`, {
@@ -134,21 +149,19 @@ export default function UserDashboardPage() {
             });
 
             if (response.ok) {
-                const updated = assignedOrders.filter(order => order.order_id !== orderId);
-                setAssignedOrders(updated);
-                localStorage.setItem(LS_ORDERS, JSON.stringify(updated));
+                // Remove the cancelled order from the UI list immediately
+                setAssignedOrders(prev => prev.filter(order => order.order_id !== orderId));
                 alert("Order cancelled successfully.");
             } else {
                 alert("Failed to cancel order.");
             }
-
         } catch (error) {
             console.error("Cancel Error:", error);
             alert("Error cancelling order.");
         }
     };
 
-    // SAVE NOTES → CREATE TICKET
+    // --- FUNCTION: Save Notes to Backend as a Ticket and Navigate ---
     const saveNotesAsTicket = async () => {
         if (!notes.trim()) {
             setSaveMessage('Error: Notes cannot be empty.');
@@ -172,6 +185,8 @@ export default function UserDashboardPage() {
         setSaveMessage('Saving...');
 
         try {
+            const actualPhoneNumber = phoneNumber;
+
             const response = await fetch(`${BACKEND_URL}/call/ticket`, {
                 method: 'POST',
                 headers: {
@@ -179,35 +194,48 @@ export default function UserDashboardPage() {
                     'X-Agent-Id': 'AGENT_001',
                 },
                 body: JSON.stringify({
-                    phoneNumber,
+                    phoneNumber: actualPhoneNumber,
                     requestDetails: notes.trim(),
                 }),
             });
 
             if (!response.ok) {
-                const error = await response.json().catch(() => ({}));
-                throw new Error(error.message || "Server error");
+                let errorData = {};
+                try {
+                    errorData = await response.json();
+                } catch (e) {
+                    const errorText = await response.text();
+                    throw new Error(`Server responded with ${response.status}. Body: ${errorText.substring(0, 100)}...`);
+                }
+                throw new Error(errorData.message || 'Server error occurred.');
             }
 
             const result = await response.json();
+
+            console.log(`Ticket ${result.ticket_id} created. Navigating to service selection.`);
+
+            // 👉 OPTIONALLY clear localStorage once ticket is created,
+            //    if you don't want notes to appear even for same phone next time:
+            // localStorage.removeItem(notesKey);
+            // localStorage.removeItem(addressKey);
 
             navigate('/user/services', {
                 state: {
                     ticketId: result.ticket_id,
                     requestDetails: result.requestDetails || notes.trim(),
-                    selectedAddressId,
-                    phoneNumber
+                    selectedAddressId: selectedAddressId,
+                    phoneNumber: phoneNumber,
                 }
             });
 
         } catch (error) {
-            setSaveMessage(`❌ Failed: ${error.message}`);
+            console.error('API Error:', error);
+            setSaveMessage(`❌ Failed to create ticket: ${error.message}`);
         } finally {
             setIsSaving(false);
             setTimeout(() => setSaveMessage(''), 5000);
         }
     };
-
     // --------------------------------------------------------
 
     // --- INLINE STYLES ADAPTED FOR COMPILATION ---
@@ -267,15 +295,15 @@ export default function UserDashboardPage() {
             overflow: 'hidden',
         },
         sidebar: {
-            width: '320px', // Slightly wider to accommodate cards
+            width: '320px',
             backgroundColor: 'white',
-            borderRight: '1px solid #e5e7eb',
+            borderRight: '1px solid '#e5e7eb',
             padding: '24px',
             display: 'flex',
             flexDirection: 'column',
             gap: '24px',
             flexShrink: 0,
-            overflowY: 'auto', // Allow scrolling in sidebar if many orders
+            overflowY: 'auto',
         },
         contentArea: {
             flex: 1,
@@ -383,10 +411,9 @@ export default function UserDashboardPage() {
             borderRadius: '4px',
             fontFamily: 'monospace',
         },
-        // 🚀 NEW STYLES FOR ORDER CARDS
         orderCard: {
             border: '1px solid #fee2e2',
-            backgroundColor: '#fff1f2', // Light red background to indicate 'Action Needed'
+            backgroundColor: '#fff1f2',
             borderRadius: '8px',
             padding: '12px',
             marginBottom: '12px',
@@ -419,7 +446,6 @@ export default function UserDashboardPage() {
             fontStyle: 'italic',
         }
     };
-    // --------------------------------------------------------
 
     return (
         <div style={styles.container}>
@@ -449,7 +475,7 @@ export default function UserDashboardPage() {
                                 {phoneNumber || 'N/A'}
                             </span>
                         </div>
-                        
+
                         <div style={styles.infoRow}>
                             <span style={styles.infoKey}>User ID</span>
                             <span style={styles.infoVal}>{userId}</span>
@@ -474,7 +500,9 @@ export default function UserDashboardPage() {
                                         key={address.address_id}
                                         style={{
                                             ...styles.addressItem,
-                                            ...(selectedAddressId === address.address_id ? styles.addressSelected : {})
+                                            ...(String(selectedAddressId) === String(address.address_id)
+                                                ? styles.addressSelected
+                                                : {})
                                         }}
                                         onClick={() => setSelectedAddressId(address.address_id)}
                                     >
@@ -506,11 +534,10 @@ export default function UserDashboardPage() {
                                             <span>#{order.order_id}</span>
                                             <span>{order.order_status}</span>
                                         </div>
-                                        {/* Display specific details from your DB here, e.g., Ticket Title */}
-                                        <div style={{fontSize: '0.8rem', marginBottom: '6px', color: '#4b5563'}}>
+                                        <div style={{ fontSize: '0.8rem', marginBottom: '6px', color: '#4b5563' }}>
                                             {order.request_details || "Service Request"}
                                         </div>
-                                        <button 
+                                        <button
                                             style={styles.cancelBtn}
                                             onClick={() => handleCancelOrder(order.order_id)}
                                         >
@@ -555,6 +582,3 @@ export default function UserDashboardPage() {
         </div>
     );
 }
-
-
-
