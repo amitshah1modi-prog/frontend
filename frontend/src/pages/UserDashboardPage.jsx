@@ -1,40 +1,59 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom'; 
-
-// Using a placeholder URL internally to resolve the 'Could not resolve' error.
 import { BACKEND_URL } from '../config';
 
 export default function UserDashboardPage() {
-    
-    // 1. URL PARAMETERS (e.g., /dashboard/1)
+
+    // -----------------------------------------
+    //           LOCALSTORAGE RESTORE
+    // -----------------------------------------
+    const LS_NOTES = "dash_notes";
+    const LS_ADDRESS = "dash_selected_address";
+    const LS_ORDERS = "dash_assigned_orders";
+
+    // Initial load from storage
+    const savedNotes = localStorage.getItem(LS_NOTES) || "";
+    const savedAddressId = localStorage.getItem(LS_ADDRESS) || null;
+    let savedOrders = [];
+    try { savedOrders = JSON.parse(localStorage.getItem(LS_ORDERS)) || []; } catch {}
+
+    // -----------------------------------------
+
     const { userId } = useParams();
-    
-    // 2. QUERY PARAMETERS (e.g., ?phoneNumber=...)
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const phoneNumber = queryParams.get('phoneNumber'); 
 
     const navigate = useNavigate();
-    const [notes, setNotes] = useState('');
+    const [notes, setNotes] = useState(savedNotes);
     const [isSaving, setIsSaving] = useState(false);
     const [saveMessage, setSaveMessage] = useState('');
     const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
     const [subscriptionStatus] = useState('Premium');
 
-    // STATE FOR ADDRESS MANAGEMENT
     const [userAddresses, setUserAddresses] = useState([]);
-    const [selectedAddressId, setSelectedAddressId] = useState(null);
+    const [selectedAddressId, setSelectedAddressId] = useState(savedAddressId);
     const [addressFetchMessage, setAddressFetchMessage] = useState('Fetching addresses...');
 
-    // 🚀 NEW STATE: Assigned Orders
-    const [assignedOrders, setAssignedOrders] = useState([]);
+    const [assignedOrders, setAssignedOrders] = useState(savedOrders);
     const [ordersLoading, setOrdersLoading] = useState(false);
 
+    // CLOCK
     useEffect(() => {
-        // Clock timer for the header
         const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString()), 1000);
         return () => clearInterval(timer);
     }, []);
+
+    // SAVE NOTES TO LOCALSTORAGE WHEN TYPED
+    useEffect(() => {
+        localStorage.setItem(LS_NOTES, notes);
+    }, [notes]);
+
+    // SAVE SELECTED ADDRESS
+    useEffect(() => {
+        if (selectedAddressId)
+            localStorage.setItem(LS_ADDRESS, selectedAddressId);
+    }, [selectedAddressId]);
 
     // EFFECT 1: Fetch addresses
     useEffect(() => {
@@ -46,22 +65,24 @@ export default function UserDashboardPage() {
 
             try {
                 const response = await fetch(`${BACKEND_URL}/call/address/${userId}`); 
-
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch addresses: ${response.statusText}`);
-                }
+                if (!response.ok) throw new Error(`Failed to fetch addresses: ${response.statusText}`);
 
                 const result = await response.json();
                 const addresses = result.addresses;
 
+                setUserAddresses(addresses);
+
                 if (addresses.length > 0) {
-                    setUserAddresses(addresses);
-                    setSelectedAddressId(addresses[0].address_id);
+                    // Restore user-selected address OR default to 1st
+                    if (savedAddressId && addresses.some(a => a.address_id == savedAddressId)) {
+                        setSelectedAddressId(savedAddressId);
+                    } else {
+                        setSelectedAddressId(addresses[0].address_id);
+                    }
                     setAddressFetchMessage(`${addresses.length} addresses loaded.`);
                 } else {
-                    setAddressFetchMessage('No addresses found for this user.');
-                    setUserAddresses([]);
                     setSelectedAddressId(null);
+                    setAddressFetchMessage('No addresses found for this user.');
                 }
 
             } catch (error) {
@@ -73,22 +94,24 @@ export default function UserDashboardPage() {
         fetchAddresses();
     }, [userId]);
 
-    // 🚀 EFFECT 2: Fetch Assigned Orders for this Phone Number
+    // FETCH ASSIGNED ORDERS
     useEffect(() => {
         const fetchAssignedOrders = async () => {
             if (!phoneNumber) return;
-            
+
             setOrdersLoading(true);
             try {
-                // We will create this endpoint in the backend next
                 const response = await fetch(`${BACKEND_URL}/call/orders/assigned?phoneNumber=${phoneNumber}`);
-                
                 if (response.ok) {
                     const data = await response.json();
-                    setAssignedOrders(data.orders || []);
-                } else {
-                    console.error("Failed to fetch assigned orders");
+                    const finalOrders = data.orders || [];
+
+                    // Save to localStorage
+                    localStorage.setItem(LS_ORDERS, JSON.stringify(finalOrders));
+
+                    setAssignedOrders(finalOrders);
                 }
+
             } catch (error) {
                 console.error("Error fetching orders:", error);
             } finally {
@@ -99,7 +122,7 @@ export default function UserDashboardPage() {
         fetchAssignedOrders();
     }, [phoneNumber]);
 
-    // 🚀 FUNCTION: Cancel an Assigned Order
+    // CANCEL ORDER
     const handleCancelOrder = async (orderId) => {
         if(!window.confirm("Are you sure the customer wants to cancel this order?")) return;
 
@@ -111,26 +134,28 @@ export default function UserDashboardPage() {
             });
 
             if (response.ok) {
-                // Remove the cancelled order from the UI list immediately
-                setAssignedOrders(prev => prev.filter(order => order.order_id !== orderId));
+                const updated = assignedOrders.filter(order => order.order_id !== orderId);
+                setAssignedOrders(updated);
+                localStorage.setItem(LS_ORDERS, JSON.stringify(updated));
                 alert("Order cancelled successfully.");
             } else {
                 alert("Failed to cancel order.");
             }
+
         } catch (error) {
             console.error("Cancel Error:", error);
             alert("Error cancelling order.");
         }
     };
 
-    // --- FUNCTION: Save Notes to Backend as a Ticket and Navigate ---
+    // SAVE NOTES → CREATE TICKET
     const saveNotesAsTicket = async () => {
         if (!notes.trim()) {
             setSaveMessage('Error: Notes cannot be empty.');
             setTimeout(() => setSaveMessage(''), 3000);
             return;
         }
-        
+
         if (!selectedAddressId && userAddresses.length > 0) {
             setSaveMessage('Error: Please select an address.');
             setTimeout(() => setSaveMessage(''), 3000);
@@ -147,8 +172,6 @@ export default function UserDashboardPage() {
         setSaveMessage('Saving...');
 
         try {
-            const actualPhoneNumber = phoneNumber; 
-
             const response = await fetch(`${BACKEND_URL}/call/ticket`, {
                 method: 'POST',
                 headers: {
@@ -156,43 +179,35 @@ export default function UserDashboardPage() {
                     'X-Agent-Id': 'AGENT_001',
                 },
                 body: JSON.stringify({
-                    phoneNumber: actualPhoneNumber,
+                    phoneNumber,
                     requestDetails: notes.trim(),
                 }),
             });
 
             if (!response.ok) {
-                let errorData = {};
-                try {
-                    errorData = await response.json();
-                } catch (e) {
-                    const errorText = await response.text();
-                    throw new Error(`Server responded with ${response.status}. Body: ${errorText.substring(0, 100)}...`);
-                }
-                throw new Error(errorData.message || 'Server error occurred.');
+                const error = await response.json().catch(() => ({}));
+                throw new Error(error.message || "Server error");
             }
 
             const result = await response.json();
-
-            console.log(`Ticket ${result.ticket_id} created. Navigating to service selection.`);
 
             navigate('/user/services', {
                 state: {
                     ticketId: result.ticket_id,
                     requestDetails: result.requestDetails || notes.trim(),
-                    selectedAddressId: selectedAddressId,
-                    phoneNumber: phoneNumber, 
+                    selectedAddressId,
+                    phoneNumber
                 }
             });
 
         } catch (error) {
-            console.error('API Error:', error);
-            setSaveMessage(`❌ Failed to create ticket: ${error.message}`);
+            setSaveMessage(`❌ Failed: ${error.message}`);
         } finally {
             setIsSaving(false);
             setTimeout(() => setSaveMessage(''), 5000);
         }
     };
+
     // --------------------------------------------------------
 
     // --- INLINE STYLES ADAPTED FOR COMPILATION ---
@@ -540,5 +555,6 @@ export default function UserDashboardPage() {
         </div>
     );
 }
+
 
 
