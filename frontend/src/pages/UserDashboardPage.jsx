@@ -1,30 +1,21 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom';
+import { useParams, useNavigate, useLocation } from 'react-router-dom'; 
 
 // Using a placeholder URL internally to resolve the 'Could not resolve' error.
 import { BACKEND_URL } from '../config';
 
 export default function UserDashboardPage() {
-
+    
     // 1. URL PARAMETERS (e.g., /dashboard/1)
     const { userId } = useParams();
-
+    
     // 2. QUERY PARAMETERS (e.g., ?phoneNumber=...)
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const phoneNumber = queryParams.get('phoneNumber');
-
-    // 👉 KEYS PER CALL (PER PHONE)
-    const notesKey = phoneNumber ? `notes_${phoneNumber}` : 'notes_unknown';
-    const addressKey = phoneNumber ? `address_${phoneNumber}` : 'address_unknown';
+    const phoneNumber = queryParams.get('phoneNumber'); 
 
     const navigate = useNavigate();
-
-    // ✅ INITIALISE FROM LOCALSTORAGE *FOR THIS PHONE ONLY*
-    const [notes, setNotes] = useState(
-        phoneNumber ? localStorage.getItem(notesKey) || '' : ''
-    );
-
+    const [notes, setNotes] = useState('');
     const [isSaving, setIsSaving] = useState(false);
     const [saveMessage, setSaveMessage] = useState('');
     const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
@@ -32,34 +23,18 @@ export default function UserDashboardPage() {
 
     // STATE FOR ADDRESS MANAGEMENT
     const [userAddresses, setUserAddresses] = useState([]);
-    const [selectedAddressId, setSelectedAddressId] = useState(
-        phoneNumber ? localStorage.getItem(addressKey) || null : null
-    );
+    const [selectedAddressId, setSelectedAddressId] = useState(null);
     const [addressFetchMessage, setAddressFetchMessage] = useState('Fetching addresses...');
 
     // 🚀 NEW STATE: Assigned Orders
     const [assignedOrders, setAssignedOrders] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(false);
 
-    // CLOCK
     useEffect(() => {
+        // Clock timer for the header
         const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString()), 1000);
         return () => clearInterval(timer);
     }, []);
-
-    // ✅ AUTO-SAVE NOTES FOR THIS PHONE
-    useEffect(() => {
-        if (!phoneNumber) return;
-        localStorage.setItem(notesKey, notes);
-    }, [notes, phoneNumber, notesKey]);
-
-    // ✅ AUTO-SAVE SELECTED ADDRESS FOR THIS PHONE
-    useEffect(() => {
-        if (!phoneNumber) return;
-        if (selectedAddressId) {
-            localStorage.setItem(addressKey, selectedAddressId);
-        }
-    }, [selectedAddressId, phoneNumber, addressKey]);
 
     // EFFECT 1: Fetch addresses
     useEffect(() => {
@@ -70,7 +45,7 @@ export default function UserDashboardPage() {
             }
 
             try {
-                const response = await fetch(`${BACKEND_URL}/call/address/${userId}`);
+                const response = await fetch(`${BACKEND_URL}/call/address/${userId}`); 
 
                 if (!response.ok) {
                     throw new Error(`Failed to fetch addresses: ${response.statusText}`);
@@ -81,19 +56,7 @@ export default function UserDashboardPage() {
 
                 if (addresses.length > 0) {
                     setUserAddresses(addresses);
-
-                    // 🔁 Try to restore saved address for this phoneNumber
-                    if (phoneNumber) {
-                        const storedId = localStorage.getItem(addressKey);
-                        if (storedId && addresses.some(a => String(a.address_id) === String(storedId))) {
-                            setSelectedAddressId(storedId);
-                        } else {
-                            setSelectedAddressId(addresses[0].address_id);
-                        }
-                    } else {
-                        setSelectedAddressId(addresses[0].address_id);
-                    }
-
+                    setSelectedAddressId(addresses[0].address_id);
                     setAddressFetchMessage(`${addresses.length} addresses loaded.`);
                 } else {
                     setAddressFetchMessage('No addresses found for this user.');
@@ -108,19 +71,18 @@ export default function UserDashboardPage() {
         };
 
         fetchAddresses();
-    }, [userId, phoneNumber, addressKey]);
+    }, [userId]);
 
     // 🚀 EFFECT 2: Fetch Assigned Orders for this Phone Number
     useEffect(() => {
         const fetchAssignedOrders = async () => {
             if (!phoneNumber) return;
-
+            
             setOrdersLoading(true);
             try {
-                const response = await fetch(
-                    `${BACKEND_URL}/call/orders/assigned?phoneNumber=${phoneNumber}`
-                );
-
+                // We will create this endpoint in the backend next
+                const response = await fetch(`${BACKEND_URL}/call/orders/assigned?phoneNumber=${phoneNumber}`);
+                
                 if (response.ok) {
                     const data = await response.json();
                     setAssignedOrders(data.orders || []);
@@ -139,7 +101,7 @@ export default function UserDashboardPage() {
 
     // 🚀 FUNCTION: Cancel an Assigned Order
     const handleCancelOrder = async (orderId) => {
-        if (!window.confirm("Are you sure the customer wants to cancel this order?")) return;
+        if(!window.confirm("Are you sure the customer wants to cancel this order?")) return;
 
         try {
             const response = await fetch(`${BACKEND_URL}/call/orders/cancel`, {
@@ -168,7 +130,7 @@ export default function UserDashboardPage() {
             setTimeout(() => setSaveMessage(''), 3000);
             return;
         }
-
+        
         if (!selectedAddressId && userAddresses.length > 0) {
             setSaveMessage('Error: Please select an address.');
             setTimeout(() => setSaveMessage(''), 3000);
@@ -185,7 +147,7 @@ export default function UserDashboardPage() {
         setSaveMessage('Saving...');
 
         try {
-            const actualPhoneNumber = phoneNumber;
+            const actualPhoneNumber = phoneNumber; 
 
             const response = await fetch(`${BACKEND_URL}/call/ticket`, {
                 method: 'POST',
@@ -214,17 +176,12 @@ export default function UserDashboardPage() {
 
             console.log(`Ticket ${result.ticket_id} created. Navigating to service selection.`);
 
-            // 👉 OPTIONALLY clear localStorage once ticket is created,
-            //    if you don't want notes to appear even for same phone next time:
-            // localStorage.removeItem(notesKey);
-            // localStorage.removeItem(addressKey);
-
             navigate('/user/services', {
                 state: {
                     ticketId: result.ticket_id,
                     requestDetails: result.requestDetails || notes.trim(),
                     selectedAddressId: selectedAddressId,
-                    phoneNumber: phoneNumber,
+                    phoneNumber: phoneNumber, 
                 }
             });
 
@@ -295,7 +252,7 @@ export default function UserDashboardPage() {
             overflow: 'hidden',
         },
         sidebar: {
-            width: '320px',
+            width: '320px', // Slightly wider to accommodate cards
             backgroundColor: 'white',
             borderRight: '1px solid #e5e7eb',
             padding: '24px',
@@ -303,7 +260,7 @@ export default function UserDashboardPage() {
             flexDirection: 'column',
             gap: '24px',
             flexShrink: 0,
-            overflowY: 'auto',
+            overflowY: 'auto', // Allow scrolling in sidebar if many orders
         },
         contentArea: {
             flex: 1,
@@ -411,9 +368,10 @@ export default function UserDashboardPage() {
             borderRadius: '4px',
             fontFamily: 'monospace',
         },
+        // 🚀 NEW STYLES FOR ORDER CARDS
         orderCard: {
             border: '1px solid #fee2e2',
-            backgroundColor: '#fff1f2',
+            backgroundColor: '#fff1f2', // Light red background to indicate 'Action Needed'
             borderRadius: '8px',
             padding: '12px',
             marginBottom: '12px',
@@ -446,6 +404,7 @@ export default function UserDashboardPage() {
             fontStyle: 'italic',
         }
     };
+    // --------------------------------------------------------
 
     return (
         <div style={styles.container}>
@@ -475,7 +434,7 @@ export default function UserDashboardPage() {
                                 {phoneNumber || 'N/A'}
                             </span>
                         </div>
-
+                        
                         <div style={styles.infoRow}>
                             <span style={styles.infoKey}>User ID</span>
                             <span style={styles.infoVal}>{userId}</span>
@@ -500,9 +459,7 @@ export default function UserDashboardPage() {
                                         key={address.address_id}
                                         style={{
                                             ...styles.addressItem,
-                                            ...(String(selectedAddressId) === String(address.address_id)
-                                                ? styles.addressSelected
-                                                : {})
+                                            ...(selectedAddressId === address.address_id ? styles.addressSelected : {})
                                         }}
                                         onClick={() => setSelectedAddressId(address.address_id)}
                                     >
@@ -534,10 +491,11 @@ export default function UserDashboardPage() {
                                             <span>#{order.order_id}</span>
                                             <span>{order.order_status}</span>
                                         </div>
-                                        <div style={{ fontSize: '0.8rem', marginBottom: '6px', color: '#4b5563' }}>
+                                        {/* Display specific details from your DB here, e.g., Ticket Title */}
+                                        <div style={{fontSize: '0.8rem', marginBottom: '6px', color: '#4b5563'}}>
                                             {order.request_details || "Service Request"}
                                         </div>
-                                        <button
+                                        <button 
                                             style={styles.cancelBtn}
                                             onClick={() => handleCancelOrder(order.order_id)}
                                         >
@@ -582,4 +540,5 @@ export default function UserDashboardPage() {
         </div>
     );
 }
+
 
