@@ -297,7 +297,7 @@ export default function UserDashboardPage() {
         sidebar: {
             width: '320px',
             backgroundColor: 'white',
-            borderRight: '1px solid '#e5e7eb',
+            borderRight: '1px solid #e5e7eb',
             padding: '24px',
             display: 'flex',
             flexDirection: 'column',
@@ -582,3 +582,4 @@ export default function UserDashboardPage() {
         </div>
     );
 }
+
