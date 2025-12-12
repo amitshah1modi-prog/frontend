@@ -1,214 +1,107 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
+
 import { BACKEND_URL } from '../config';
 
+
 export default function UserDashboardPage() {
+// FIX: location must be declared before using it
+const location = useLocation();
+const navigate = useNavigate();
 
-   const userId = location.state?.userId || useParams().userId;
 
-    const location = useLocation();
-    const queryParams = new URLSearchParams(location.search);
-    const phoneNumber = queryParams.get('phoneNumber');
+const { userId: routeUserId } = useParams();
+const passedUserId = location.state?.userId;
+const userId = passedUserId || routeUserId;
 
-    const navigate = useNavigate();
-    const [notes, setNotes] = useState('');
-    const [isSaving, setIsSaving] = useState(false);
-    const [saveMessage, setSaveMessage] = useState('');
-    const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
-    const [subscriptionStatus] = useState('Premium');
 
-    const [userAddresses, setUserAddresses] = useState([]);
-    const [selectedAddressId, setSelectedAddressId] = useState(null);
-    const [addressFetchMessage, setAddressFetchMessage] = useState('Fetching addresses...');
+const queryParams = new URLSearchParams(location.search);
+const phoneNumber = queryParams.get('phoneNumber');
 
-    const [assignedOrders, setAssignedOrders] = useState([]);
-    const [ordersLoading, setOrdersLoading] = useState(false);
 
-    // ⭐⭐⭐ FIXED RESTORE SYSTEM ⭐⭐⭐
-    useEffect(() => {
-        const state = location.state;
-        console.log("RESTORE — location.state =", state);
+const [notes, setNotes] = useState('');
+const [isSaving, setIsSaving] = useState(false);
+const [saveMessage, setSaveMessage] = useState('');
+const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
+const [subscriptionStatus] = useState('Premium');
 
-        // CASE 1 → returning from services page
-        if (state?.fromServicePage && state?.ticketId) {
-            console.log("RESTORE TRIGGERED for ticket:", state.ticketId);
-            const tid = state.ticketId;
 
-            const savedNotes = localStorage.getItem(`notes_${tid}`);
-            const savedAddress = localStorage.getItem(`address_${tid}`);
-            const savedOrders = localStorage.getItem(`orders_${tid}`);
+const [userAddresses, setUserAddresses] = useState([]);
+const [selectedAddressId, setSelectedAddressId] = useState(null);
+const [addressFetchMessage, setAddressFetchMessage] = useState('Fetching addresses...');
 
-            if (savedNotes) setNotes(savedNotes);
-            if (savedAddress) setSelectedAddressId(Number(savedAddress));
-            if (savedOrders) setAssignedOrders(JSON.parse(savedOrders));
 
-            return; // STOP → we do NOT reset anything
-        }
+const [assignedOrders, setAssignedOrders] = useState([]);
+const [ordersLoading, setOrdersLoading] = useState(false);
 
-        // CASE 2 → fresh call (NO ticket state)
-        if (!state?.ticketId) {
-            console.log("NEW CALL → clearing UI");
-            setNotes('');
-            setSelectedAddressId(null);
-            setAssignedOrders([]);
-            return;
-        }
 
-    }, [location.state]);
+// RESTORE LOGIC
+useEffect(() => {
+const state = location.state;
+console.log('RESTORE — location.state =', state);
 
-    // Clock
-    useEffect(() => {
-        const timer = setInterval(() => {
-            setCurrentTime(new Date().toLocaleTimeString());
-        }, 1000);
-        return () => clearInterval(timer);
-    }, []);
 
-    // Fetch addresses
-    useEffect(() => {
-        const fetchAddresses = async () => {
-            if (!userId) return;
+if (state?.fromServicePage && state?.ticketId) {
+const tid = state.ticketId;
+const savedNotes = localStorage.getItem(`notes_${tid}`);
+const savedAddress = localStorage.getItem(`address_${tid}`);
+const savedOrders = localStorage.getItem(`orders_${tid}`);
 
-            try {
-                const response = await fetch(`${BACKEND_URL}/call/address/${userId}`);
-                const result = await response.json();
 
-                const addresses = result.addresses;
-                setUserAddresses(addresses);
+if (savedNotes) setNotes(savedNotes);
+if (savedAddress) setSelectedAddressId(Number(savedAddress));
+if (savedOrders) setAssignedOrders(JSON.parse(savedOrders));
+return;
+}
 
-                if (!location.state?.fromServicePage) {
-                    if (addresses.length > 0) {
-                        setSelectedAddressId(addresses[0].address_id);
-                    }
-                }
-            } catch (err) {
-                setAddressFetchMessage("Failed to load addresses");
-            }
-        };
 
-        fetchAddresses();
-    }, [userId, location.state]);
+if (!state?.ticketId) {
+console.log('NEW CALL → clearing UI');
+setNotes('');
+setSelectedAddressId(null);
+setAssignedOrders([]);
+}
+}, [location.state]);
 
-    // Fetch assigned orders
-    useEffect(() => {
-        const fetchAssignedOrders = async () => {
-            if (!phoneNumber) return;
 
-            const tid = location.state?.ticketId;
-            if (location.state?.fromServicePage && localStorage.getItem(`orders_${tid}`)) {
-                console.log("Orders restored from localStorage");
-                return; 
-            }
+// Clock
+useEffect(() => {
+const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString()), 1000);
+return () => clearInterval(timer);
+}, []);
 
-            setOrdersLoading(true);
-            try {
-                const response = await fetch(`${BACKEND_URL}/call/orders/assigned?phoneNumber=${phoneNumber}`);
-                const data = await response.json();
-                setAssignedOrders(data.orders || []);
-            } catch (err) {
-                console.log(err);
-            }
-            setOrdersLoading(false);
-        };
 
-        fetchAssignedOrders();
-    }, [phoneNumber, location.state]);
+// Fetch addresses
+useEffect(() => {
+const fetchAddresses = async () => {
+if (!userId) {
+console.warn('⚠ No userId available — skipping address fetch');
+return;
+}
 
-    // Cancel order
-    const handleCancelOrder = async (orderId) => {
-        if (!window.confirm("Are you sure?")) return;
 
-        try {
-            await fetch(`${BACKEND_URL}/call/orders/cancel`, {
-                method: "PUT",
-                headers: { "Content-Type": "application/json" },
-                body: JSON.stringify({ orderId, status: "Cust_Cancelled" }),
-            });
+try {
+const response = await fetch(`${BACKEND_URL}/call/address/${userId}`);
+const result = await response.json();
+const addresses = result.addresses || [];
+setUserAddresses(addresses);
 
-            setAssignedOrders((prev) => prev.filter((o) => o.order_id !== orderId));
-        } catch (err) {
-            alert("Error canceling order");
-        }
-    };
 
-    // SAVE NOTES + CREATE TICKET
-    const saveNotesAsTicket = async () => {
-        if (!notes.trim()) {
-            setSaveMessage('Error: Notes cannot be empty.');
-            setTimeout(() => setSaveMessage(''), 3000);
-            return;
-        }
-        
-        if (!selectedAddressId && userAddresses.length > 0) {
-            setSaveMessage('Error: Please select an address.');
-            setTimeout(() => setSaveMessage(''), 3000);
-            return;
-        }
+if (!location.state?.fromServicePage && addresses.length > 0) {
+setSelectedAddressId(addresses[0].address_id);
+}
+} catch (err) {
+setAddressFetchMessage('Failed to load addresses');
+}
+};
 
-        if (!phoneNumber) {
-            setSaveMessage('Error: Call phone number is missing from the URL query.');
-            setTimeout(() => setSaveMessage(''), 3000);
-            return;
-        }
 
-        setIsSaving(true);
-        setSaveMessage('Saving...');
+fetchAddresses();
+}, [userId, location.state]);
 
-        try {
-            const actualPhoneNumber = phoneNumber; 
 
-            const response = await fetch(`${BACKEND_URL}/call/ticket`, {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                    'X-Agent-Id': 'AGENT_001',
-                },
-                body: JSON.stringify({
-                    phoneNumber: actualPhoneNumber,
-                    requestDetails: notes.trim(),
-                }),
-            });
-
-            if (!response.ok) {
-                let errorData = {};
-                try {
-                    errorData = await response.json();
-                } catch (e) {
-                    const errorText = await response.text().catch(()=> '');
-                    throw new Error(`Server responded with ${response.status}. Body: ${errorText.substring(0, 100)}...`);
-                }
-                throw new Error(errorData.message || 'Server error occurred.');
-            }
-
-            const result = await response.json();
-            const ticketId = result.ticket_id;
-
-            // save state
-            try {
-                localStorage.setItem(`notes_${ticketId}`, notes.trim());
-                if (selectedAddressId) localStorage.setItem(`address_${ticketId}`, String(selectedAddressId));
-                localStorage.setItem(`orders_${ticketId}`, JSON.stringify(assignedOrders || []));
-            } catch (e) {
-                console.warn("Could not save to localStorage:", e);
-            }
-
-           navigate(`/user/dashboard/${result.user_id}?phoneNumber=${callerNumber}`, {
-    state: {
-        userId: result.user_id,   // 🔥 this is the correct id
-        ticketId: result.ticketId,
-        phoneNumber: callerNumber
-    }
-});
-
-        } catch (error) {
-            console.error('API Error:', error);
-            setSaveMessage(`❌ Failed to create ticket: ${error.message}`);
-        } finally {
-            setIsSaving(false);
-            setTimeout(() => setSaveMessage(''), 5000);
-        }
-    };
+};
     // --------------------------------------------------------
 
     // --- INLINE STYLES ADAPTED FOR COMPILATION ---
@@ -578,5 +471,6 @@ export default function UserDashboardPage() {
         </div>
     );
 }
+
 
 
