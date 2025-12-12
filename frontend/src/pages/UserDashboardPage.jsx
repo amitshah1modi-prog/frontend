@@ -1,18 +1,14 @@
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate, useLocation } from 'react-router-dom'; 
+import { useParams, useNavigate, useLocation } from 'react-router-dom';
 
-// Using a placeholder URL internally to resolve the 'Could not resolve' error.
 import { BACKEND_URL } from '../config';
 
 export default function UserDashboardPage() {
-    
-    // 1. URL PARAMETERS (e.g., /dashboard/1)
+
     const { userId } = useParams();
-    
-    // 2. QUERY PARAMETERS (e.g., ?phoneNumber=...)
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
-    const phoneNumber = queryParams.get('phoneNumber'); 
+    const phoneNumber = queryParams.get('phoneNumber');
 
     const navigate = useNavigate();
     const [notes, setNotes] = useState('');
@@ -21,108 +17,110 @@ export default function UserDashboardPage() {
     const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
     const [subscriptionStatus] = useState('Premium');
 
-    // STATE FOR ADDRESS MANAGEMENT
     const [userAddresses, setUserAddresses] = useState([]);
     const [selectedAddressId, setSelectedAddressId] = useState(null);
     const [addressFetchMessage, setAddressFetchMessage] = useState('Fetching addresses...');
 
-    // 🚀 NEW STATE: Assigned Orders
     const [assignedOrders, setAssignedOrders] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(false);
 
+    // ⭐ RESTORE SYSTEM (notes + address + orders)
     useEffect(() => {
-        // Clock timer for the header
-        const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString()), 1000);
+        const state = location.state;
+        if (state && state.ticketId) {
+            const tid = state.ticketId;
+
+            const savedNotes = localStorage.getItem(`notes_${tid}`);
+            if (savedNotes) setNotes(savedNotes);
+
+            const savedAddress = localStorage.getItem(`address_${tid}`);
+            if (savedAddress) setSelectedAddressId(Number(savedAddress));
+
+            const savedOrders = localStorage.getItem(`orders_${tid}`);
+            if (savedOrders) setAssignedOrders(JSON.parse(savedOrders));
+        } else {
+            // New call → reset
+            setNotes('');
+            setSelectedAddressId(null);
+            setAssignedOrders([]);
+        }
+    }, [location.state]);
+
+    // Clock
+    useEffect(() => {
+        const timer = setInterval(() => {
+            setCurrentTime(new Date().toLocaleTimeString());
+        }, 1000);
         return () => clearInterval(timer);
     }, []);
 
-    // EFFECT 1: Fetch addresses
+    // Fetch addresses
     useEffect(() => {
         const fetchAddresses = async () => {
-            if (!userId) {
-                setAddressFetchMessage('Error: User ID not provided in route.');
-                return;
-            }
+            if (!userId) return;
 
             try {
-                const response = await fetch(`${BACKEND_URL}/call/address/${userId}`); 
-
-                if (!response.ok) {
-                    throw new Error(`Failed to fetch addresses: ${response.statusText}`);
-                }
-
+                const response = await fetch(`${BACKEND_URL}/call/address/${userId}`);
                 const result = await response.json();
+
                 const addresses = result.addresses;
+                setUserAddresses(addresses);
 
-                if (addresses.length > 0) {
-                    setUserAddresses(addresses);
-                    setSelectedAddressId(addresses[0].address_id);
-                    setAddressFetchMessage(`${addresses.length} addresses loaded.`);
+                if (location.state?.ticketId) {
+                    // we restored address already
                 } else {
-                    setAddressFetchMessage('No addresses found for this user.');
-                    setUserAddresses([]);
-                    setSelectedAddressId(null);
+                    // new call → auto select first
+                    if (addresses.length > 0) {
+                        setSelectedAddressId(addresses[0].address_id);
+                    }
                 }
-
-            } catch (error) {
-                console.error('Address Fetch Error:', error);
-                setAddressFetchMessage(`❌ Failed to load addresses: ${error.message}`);
+            } catch (err) {
+                setAddressFetchMessage("Failed to load addresses");
             }
         };
 
         fetchAddresses();
-    }, [userId]);
+    }, [userId, location.state]);
 
-    // 🚀 EFFECT 2: Fetch Assigned Orders for this Phone Number
+    // Fetch assigned orders
     useEffect(() => {
         const fetchAssignedOrders = async () => {
             if (!phoneNumber) return;
-            
+
+            if (location.state?.ticketId && localStorage.getItem(`orders_${location.state.ticketId}`)) {
+                return; // restored from memory; skip
+            }
+
             setOrdersLoading(true);
             try {
-                // We will create this endpoint in the backend next
                 const response = await fetch(`${BACKEND_URL}/call/orders/assigned?phoneNumber=${phoneNumber}`);
-                
-                if (response.ok) {
-                    const data = await response.json();
-                    setAssignedOrders(data.orders || []);
-                } else {
-                    console.error("Failed to fetch assigned orders");
-                }
-            } catch (error) {
-                console.error("Error fetching orders:", error);
-            } finally {
-                setOrdersLoading(false);
+                const data = await response.json();
+                setAssignedOrders(data.orders || []);
+            } catch (err) {
+                console.log(err);
             }
+            setOrdersLoading(false);
         };
 
         fetchAssignedOrders();
-    }, [phoneNumber]);
+    }, [phoneNumber, location.state]);
 
-    // 🚀 FUNCTION: Cancel an Assigned Order
+    // Cancel order
     const handleCancelOrder = async (orderId) => {
-        if(!window.confirm("Are you sure the customer wants to cancel this order?")) return;
+        if (!window.confirm("Are you sure?")) return;
 
         try {
-            const response = await fetch(`${BACKEND_URL}/call/orders/cancel`, {
-                method: 'PUT',
-                headers: { 'Content-Type': 'application/json' },
-                body: JSON.stringify({ orderId, status: 'Cust_Cancelled' })
+            await fetch(`${BACKEND_URL}/call/orders/cancel`, {
+                method: "PUT",
+                headers: { "Content-Type": "application/json" },
+                body: JSON.stringify({ orderId, status: "Cust_Cancelled" }),
             });
 
-            if (response.ok) {
-                // Remove the cancelled order from the UI list immediately
-                setAssignedOrders(prev => prev.filter(order => order.order_id !== orderId));
-                alert("Order cancelled successfully.");
-            } else {
-                alert("Failed to cancel order.");
-            }
-        } catch (error) {
-            console.error("Cancel Error:", error);
-            alert("Error cancelling order.");
+            setAssignedOrders((prev) => prev.filter((o) => o.order_id !== orderId));
+        } catch (err) {
+            alert("Error canceling order");
         }
     };
-
     // --- FUNCTION: Save Notes to Backend as a Ticket and Navigate ---
     const saveNotesAsTicket = async () => {
         if (!notes.trim()) {
@@ -166,19 +164,29 @@ export default function UserDashboardPage() {
                 try {
                     errorData = await response.json();
                 } catch (e) {
-                    const errorText = await response.text();
+                    const errorText = await response.text().catch(()=> '');
                     throw new Error(`Server responded with ${response.status}. Body: ${errorText.substring(0, 100)}...`);
                 }
                 throw new Error(errorData.message || 'Server error occurred.');
             }
 
             const result = await response.json();
+            const ticketId = result.ticket_id;
 
-            console.log(`Ticket ${result.ticket_id} created. Navigating to service selection.`);
+            // --- SAVE CURRENT STATE PER-TICKET so BACK restores it ---
+            try {
+                localStorage.setItem(`notes_${ticketId}`, notes.trim());
+                if (selectedAddressId) localStorage.setItem(`address_${ticketId}`, String(selectedAddressId));
+                localStorage.setItem(`orders_${ticketId}`, JSON.stringify(assignedOrders || []));
+            } catch (e) {
+                console.warn("Could not save to localStorage:", e);
+            }
+
+            console.log(`Ticket ${ticketId} created. Navigating to service selection.`);
 
             navigate('/user/services', {
                 state: {
-                    ticketId: result.ticket_id,
+                    ticketId: ticketId,
                     requestDetails: result.requestDetails || notes.trim(),
                     selectedAddressId: selectedAddressId,
                     phoneNumber: phoneNumber, 
@@ -405,7 +413,6 @@ export default function UserDashboardPage() {
         }
     };
     // --------------------------------------------------------
-
     return (
         <div style={styles.container}>
             {/* HEADER */}
@@ -434,7 +441,7 @@ export default function UserDashboardPage() {
                                 {phoneNumber || 'N/A'}
                             </span>
                         </div>
-                        
+
                         <div style={styles.infoRow}>
                             <span style={styles.infoKey}>User ID</span>
                             <span style={styles.infoVal}>{userId}</span>
@@ -452,6 +459,7 @@ export default function UserDashboardPage() {
                         <p style={{ fontSize: '0.8rem', color: '#6b7280', marginBottom: '10px' }}>
                             {addressFetchMessage}
                         </p>
+
                         {userAddresses.length > 0 ? (
                             <div>
                                 {userAddresses.map((address) => (
@@ -459,7 +467,9 @@ export default function UserDashboardPage() {
                                         key={address.address_id}
                                         style={{
                                             ...styles.addressItem,
-                                            ...(selectedAddressId === address.address_id ? styles.addressSelected : {})
+                                            ...(selectedAddressId === address.address_id
+                                                ? styles.addressSelected
+                                                : {})
                                         }}
                                         onClick={() => setSelectedAddressId(address.address_id)}
                                     >
@@ -474,7 +484,7 @@ export default function UserDashboardPage() {
                         )}
                     </div>
 
-                    {/* 🚀 NEW SECTION: ACTIVE ASSIGNED ORDERS */}
+                    {/* 🚀 ACTIVE ASSIGNED ORDERS */}
                     <div style={styles.card}>
                         <div style={styles.userInfoTitle}>🚀 Active Orders</div>
                         <p style={{ fontSize: '0.75rem', color: '#6b7280', marginBottom: '10px' }}>
@@ -491,11 +501,18 @@ export default function UserDashboardPage() {
                                             <span>#{order.order_id}</span>
                                             <span>{order.order_status}</span>
                                         </div>
-                                        {/* Display specific details from your DB here, e.g., Ticket Title */}
-                                        <div style={{fontSize: '0.8rem', marginBottom: '6px', color: '#4b5563'}}>
-                                            {order.request_details || "Service Request"}
+
+                                        <div
+                                            style={{
+                                                fontSize: '0.8rem',
+                                                marginBottom: '6px',
+                                                color: '#4b5563'
+                                            }}
+                                        >
+                                            {order.request_details || 'Service Request'}
                                         </div>
-                                        <button 
+
+                                        <button
                                             style={styles.cancelBtn}
                                             onClick={() => handleCancelOrder(order.order_id)}
                                         >
@@ -510,7 +527,7 @@ export default function UserDashboardPage() {
                     </div>
                 </aside>
 
-                {/* CONTENT AREA - Used for Note Taking */}
+                {/* CONTENT AREA */}
                 <main style={styles.contentArea}>
                     <h2 style={styles.title}>📝 Active Call Notes</h2>
 
@@ -519,17 +536,30 @@ export default function UserDashboardPage() {
                             style={styles.notesTextarea}
                             value={notes}
                             onChange={(e) => setNotes(e.target.value)}
-                            placeholder="Start taking notes on the user's request, issues, or actions taken..."
+                            placeholder="Start taking notes on the user's request..."
                         />
                     </div>
 
-                    <div style={{ marginTop: '20px', textAlign: 'right', display: 'flex', justifyContent: 'flex-end', alignItems: 'center' }}>
+                    <div
+                        style={{
+                            marginTop: '20px',
+                            textAlign: 'right',
+                            display: 'flex',
+                            justifyContent: 'flex-end',
+                            alignItems: 'center'
+                        }}
+                    >
                         {saveMessage && (
                             <span style={styles.message}>{saveMessage}</span>
                         )}
+
                         <button
                             onClick={saveNotesAsTicket}
-                            disabled={isSaving || !phoneNumber || (userAddresses.length > 0 && !selectedAddressId)}
+                            disabled={
+                                isSaving ||
+                                !phoneNumber ||
+                                (userAddresses.length > 0 && !selectedAddressId)
+                            }
                             style={styles.saveButton}
                         >
                             {isSaving ? 'Saving...' : 'Save Notes & Select Service'}
@@ -540,5 +570,3 @@ export default function UserDashboardPage() {
         </div>
     );
 }
-
-
