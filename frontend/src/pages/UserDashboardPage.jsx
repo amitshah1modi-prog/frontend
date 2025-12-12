@@ -24,26 +24,36 @@ export default function UserDashboardPage() {
     const [assignedOrders, setAssignedOrders] = useState([]);
     const [ordersLoading, setOrdersLoading] = useState(false);
 
-    // ⭐ RESTORE SYSTEM (notes + address + orders)
+    // ⭐⭐⭐ FIXED RESTORE SYSTEM ⭐⭐⭐
     useEffect(() => {
         const state = location.state;
-        if (state && state.ticketId) {
+        console.log("RESTORE — location.state =", state);
+
+        // CASE 1 → returning from services page
+        if (state?.fromServicePage && state?.ticketId) {
+            console.log("RESTORE TRIGGERED for ticket:", state.ticketId);
             const tid = state.ticketId;
 
             const savedNotes = localStorage.getItem(`notes_${tid}`);
-            if (savedNotes) setNotes(savedNotes);
-
             const savedAddress = localStorage.getItem(`address_${tid}`);
-            if (savedAddress) setSelectedAddressId(Number(savedAddress));
-
             const savedOrders = localStorage.getItem(`orders_${tid}`);
+
+            if (savedNotes) setNotes(savedNotes);
+            if (savedAddress) setSelectedAddressId(Number(savedAddress));
             if (savedOrders) setAssignedOrders(JSON.parse(savedOrders));
-        } else {
-            // New call → reset
+
+            return; // STOP → we do NOT reset anything
+        }
+
+        // CASE 2 → fresh call (NO ticket state)
+        if (!state?.ticketId) {
+            console.log("NEW CALL → clearing UI");
             setNotes('');
             setSelectedAddressId(null);
             setAssignedOrders([]);
+            return;
         }
+
     }, [location.state]);
 
     // Clock
@@ -66,10 +76,7 @@ export default function UserDashboardPage() {
                 const addresses = result.addresses;
                 setUserAddresses(addresses);
 
-                if (location.state?.ticketId) {
-                    // we restored address already
-                } else {
-                    // new call → auto select first
+                if (!location.state?.fromServicePage) {
                     if (addresses.length > 0) {
                         setSelectedAddressId(addresses[0].address_id);
                     }
@@ -87,8 +94,10 @@ export default function UserDashboardPage() {
         const fetchAssignedOrders = async () => {
             if (!phoneNumber) return;
 
-            if (location.state?.ticketId && localStorage.getItem(`orders_${location.state.ticketId}`)) {
-                return; // restored from memory; skip
+            const tid = location.state?.ticketId;
+            if (location.state?.fromServicePage && localStorage.getItem(`orders_${tid}`)) {
+                console.log("Orders restored from localStorage");
+                return; 
             }
 
             setOrdersLoading(true);
@@ -121,7 +130,8 @@ export default function UserDashboardPage() {
             alert("Error canceling order");
         }
     };
-    // --- FUNCTION: Save Notes to Backend as a Ticket and Navigate ---
+
+    // SAVE NOTES + CREATE TICKET
     const saveNotesAsTicket = async () => {
         if (!notes.trim()) {
             setSaveMessage('Error: Notes cannot be empty.');
@@ -173,7 +183,7 @@ export default function UserDashboardPage() {
             const result = await response.json();
             const ticketId = result.ticket_id;
 
-            // --- SAVE CURRENT STATE PER-TICKET so BACK restores it ---
+            // save state
             try {
                 localStorage.setItem(`notes_${ticketId}`, notes.trim());
                 if (selectedAddressId) localStorage.setItem(`address_${ticketId}`, String(selectedAddressId));
@@ -182,14 +192,12 @@ export default function UserDashboardPage() {
                 console.warn("Could not save to localStorage:", e);
             }
 
-            console.log(`Ticket ${ticketId} created. Navigating to service selection.`);
-
             navigate('/user/services', {
                 state: {
                     ticketId: ticketId,
                     requestDetails: result.requestDetails || notes.trim(),
                     selectedAddressId: selectedAddressId,
-                    phoneNumber: phoneNumber, 
+                    phoneNumber: phoneNumber,
                 }
             });
 
@@ -570,3 +578,4 @@ export default function UserDashboardPage() {
         </div>
     );
 }
+
