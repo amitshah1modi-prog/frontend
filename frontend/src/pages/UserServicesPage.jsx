@@ -351,15 +351,15 @@ export default function UserServicesPage() {
     };
 
     const handleBackToDashboard = () => {
-        navigate(`/dashboard/${userId}?phoneNumber=${phoneNumber}`, {
-            state: {
-                ticketId,
-                requestDetails,
-                selectedAddressId,
-                fromServicePage: true,
-            },
-        });
-    };
+    navigate(`/user/dashboard/${userId}?phoneNumber=${phoneNumber}`, {
+        state: {
+            ticketId,
+            requestDetails,
+            selectedAddressId,
+            fromServicePage: true,
+        },
+    });
+};
 
     const selectedCount = Object.keys(selectedServices).length;
 
