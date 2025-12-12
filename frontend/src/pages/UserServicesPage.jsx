@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate, useParams } from 'react-router-dom';
 
 const PhoneIcon = () => <span style={{ fontSize: '1.25rem' }}>📞</span>;
 
@@ -236,7 +236,7 @@ const SubcategoryCard = ({ subcategory, isSelected, onClick }) => {
     };
 
     return (
-        <div style={cardStyle} onClick={() => onClick(subcategory.name)}>
+        <div style={cardStyle} onClick={() => onClick(subcategory)}>
             <span style={iconStyle}>{subcategory.icon}</span>
             <span style={{ fontSize: '0.85rem', fontWeight: '600' }}>{subcategory.name}</span>
         </div>
@@ -246,62 +246,40 @@ const SubcategoryCard = ({ subcategory, isSelected, onClick }) => {
 const SubcategoryModal = ({ service, subcategories, initialSelection, onSave, onClose }) => {
     const [tempSelection, setTempSelection] = useState(initialSelection || []);
 
-    const toggleSelection = (name) => {
-        setTempSelection(prev =>
-            prev.includes(name) ? prev.filter(n => n !== name) : [...prev, name]
+    const toggleSelection = (sub) => {
+        setTempSelection((prev) =>
+            prev.includes(sub.name)
+                ? prev.filter((s) => s !== sub.name)
+                : [...prev, sub.name]
         );
-    };
-
-    const handleSave = () => {
-        onSave(tempSelection);
-        onClose();
     };
 
     return (
         <div style={styles.modalOverlay}>
             <div style={styles.modalContent}>
-                <h2 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#1f2937', borderBottom: '1px solid #e5e7eb', paddingBottom: '12px', marginBottom: '16px' }}>
+                <h2 style={{ fontSize: '1.5rem', fontWeight: '700', marginBottom: '20px' }}>
                     Select Sub-Services for {service.name}
                 </h2>
-                <p style={{ color: '#6b7280', marginBottom: '20px' }}>
-                    Please select one or more specific items the customer is requesting service for.
-                </p>
+
                 <div style={styles.subcategoryGrid}>
-                    {subcategories.map(sub => (
-                        <SubcategoryCard key={sub.name} subcategory={sub}
-                            isSelected={tempSelection.includes(sub.name)} onClick={toggleSelection} />
+                    {subcategories.map((sub) => (
+                        <SubcategoryCard
+                            key={sub.name}
+                            subcategory={sub}
+                            isSelected={tempSelection.includes(sub.name)}
+                            onClick={toggleSelection}
+                        />
                     ))}
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', paddingTop: '16px', borderTop: '1px solid #f3f4f6' }}>
-                    <button style={{ ...styles.buttonSecondary, padding: '8px 16px' }} onClick={onClose}>Cancel</button>
-                    <button
-                        style={tempSelection.length === 0 ? { ...styles.buttonPrimary, ...styles.buttonDisabled, padding: '8px 16px' } : { ...styles.buttonPrimary, padding: '8px 16px' }}
-                        disabled={tempSelection.length === 0} onClick={handleSave}>
-                        Save ({tempSelection.length} Selected)
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', marginTop: '20px', gap: '16px' }}>
+                    <button style={styles.buttonSecondary} onClick={onClose}>
+                        Cancel
+                    </button>
+                    <button style={styles.buttonPrimary} onClick={() => onSave(tempSelection)}>
+                        Save ({tempSelection.length})
                     </button>
                 </div>
-            </div>
-        </div>
-    );
-};
-
-const CallContext = ({ ticketId, phoneNumber, requestDetails }) => {
-    return (
-        <div style={styles.contextBox}>
-            <h2 style={{ fontSize: '1rem', fontWeight: '700', color: '#1f2937', marginBottom: '8px', paddingBottom: '4px', borderBottom: '1px solid #e5e7eb' }}>
-                🚨 Active Call Context
-            </h2>
-            <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '4px' }}>
-                **Phone:** <span style={styles.contextHighlight}>{phoneNumber}</span>
-            </p>
-            <p style={{ fontSize: '0.875rem', color: '#6b7280', marginBottom: '12px' }}>
-                **Ticket:** <span style={styles.contextHighlight}>{ticketId}</span>
-            </p>
-            <div style={{ backgroundColor: '#f9fafb', padding: '8px', borderRadius: '4px', border: '1px solid #f3f4f6', minHeight: '50px' }}>
-                <p style={{ color: '#374151', fontSize: '0.8rem', fontWeight: '600' }}>Request Note:</p>
-                <p style={{ color: '#374151', fontSize: '0.75rem', marginTop: '2px', overflow: 'hidden', textOverflow: 'ellipsis', display: '-webkit-box', WebkitLineClamp: 3, WebkitBoxOrient: 'vertical' }}>
-                    {requestDetails}
-                </p>
             </div>
         </div>
     );
@@ -310,23 +288,17 @@ const CallContext = ({ ticketId, phoneNumber, requestDetails }) => {
 export default function UserServicesPage() {
     const location = useLocation();
     const navigate = useNavigate();
+    const { userId } = useParams();
 
     const ticketId = location.state?.ticketId;
     const requestDetails = location.state?.requestDetails;
     const selectedAddressId = location.state?.selectedAddressId;
     const phoneNumber = location.state?.phoneNumber;
 
-    // 🚀 NEW: Store multiple selected services with their subcategories
-    const [selectedServices, setSelectedServices] = useState({}); // { serviceName: [subcategories] }
+    const [selectedServices, setSelectedServices] = useState({});
     const [showSubcategoryModal, setShowSubcategoryModal] = useState(false);
     const [activeModalService, setActiveModalService] = useState(null);
     const [activeSubcategoryList, setActiveSubcategoryList] = useState([]);
-    const [currentTime, setCurrentTime] = useState(new Date().toLocaleTimeString());
-
-    useEffect(() => {
-        const timer = setInterval(() => setCurrentTime(new Date().toLocaleTimeString()), 1000);
-        return () => clearInterval(timer);
-    }, []);
 
     const getSubcategoryList = (serviceName) => {
         if (serviceName === 'Cleaning') return CLEANING_SUBCATEGORIES;
@@ -340,50 +312,31 @@ export default function UserServicesPage() {
         const subcategoryList = getSubcategoryList(serviceName);
 
         if (subcategoryList) {
-            // Service with subcategories - open modal
             setActiveModalService(service);
             setActiveSubcategoryList(subcategoryList);
             setShowSubcategoryModal(true);
         } else {
-            // Service without subcategories - toggle selection
-            setSelectedServices(prev => {
-                const newSelection = { ...prev };
-                if (newSelection[serviceName]) {
-                    delete newSelection[serviceName];
-                } else {
-                    newSelection[serviceName] = [];
-                }
-                return newSelection;
+            setSelectedServices((prev) => {
+                const updated = { ...prev };
+                if (updated[serviceName]) delete updated[serviceName];
+                else updated[serviceName] = [];
+                return updated;
             });
         }
     };
 
-    const handleSubcategorySave = (subcategories) => {
-        if (activeModalService && subcategories.length > 0) {
-            setSelectedServices(prev => ({
-                ...prev,
-                [activeModalService.name]: subcategories
-            }));
-        }
+    const handleSubcategorySave = (subs) => {
+        setSelectedServices((prev) => ({
+            ...prev,
+            [activeModalService.name]: subs,
+        }));
+        setShowSubcategoryModal(false);
     };
 
     const handleConfirmAndContinue = () => {
         if (Object.keys(selectedServices).length === 0) {
-            alert('Please select at least one service before continuing.');
+            alert('Please select at least one service!');
             return;
-        }
-
-        // Validate subcategories for services that require them
-        for (const [serviceName, subcategories] of Object.entries(selectedServices)) {
-            const requiresSubcategories = ['Cleaning', 'Plumber', 'Carpenter'].includes(serviceName);
-            if (requiresSubcategories && (!subcategories || subcategories.length === 0)) {
-                alert(`Please select at least one sub-service for ${serviceName} before continuing.`);
-                const service = SERVICES.find(s => s.name === serviceName);
-                setActiveModalService(service);
-                setActiveSubcategoryList(getSubcategoryList(serviceName));
-                setShowSubcategoryModal(true);
-                return;
-            }
         }
 
         navigate('/user/servicemen', {
@@ -392,48 +345,21 @@ export default function UserServicesPage() {
                 requestDetails,
                 selectedAddressId,
                 phoneNumber,
-                selectedServices, // Pass entire object: { serviceName: [subcategories] }
-            }
+                selectedServices,
+            },
         });
     };
 
-    const handleScheduleRedirect = () => {
-        if (Object.keys(selectedServices).length === 0) {
-            alert('Please select at least one service before scheduling.');
-            return;
-        }
-
-        // Same validation as above
-        for (const [serviceName, subcategories] of Object.entries(selectedServices)) {
-            const requiresSubcategories = ['Cleaning', 'Plumber', 'Carpenter'].includes(serviceName);
-            if (requiresSubcategories && (!subcategories || subcategories.length === 0)) {
-                alert(`Please select at least one sub-service for ${serviceName} before scheduling.`);
-                const service = SERVICES.find(s => s.name === serviceName);
-                setActiveModalService(service);
-                setActiveSubcategoryList(getSubcategoryList(serviceName));
-                setShowSubcategoryModal(true);
-                return;
-            }
-        }
-
-        navigate('/user/scheduling', {
+    const handleBackToDashboard = () => {
+        navigate(`/dashboard/${userId}?phoneNumber=${phoneNumber}`, {
             state: {
                 ticketId,
                 requestDetails,
                 selectedAddressId,
-                phoneNumber,
-                selectedServices,
-            }
+                fromServicePage: true,
+            },
         });
     };
-
-    if (!ticketId || !requestDetails || !selectedAddressId || !phoneNumber) {
-        return (
-            <div style={{ ...styles.container, justifyContent: 'center', alignItems: 'center' }}>
-                <h1 style={{ fontSize: '1.5rem', fontWeight: '700', color: '#ef4444' }}>Error: Missing Call Context</h1>
-            </div>
-        );
-    }
 
     const selectedCount = Object.keys(selectedServices).length;
 
@@ -442,25 +368,22 @@ export default function UserServicesPage() {
             <header style={styles.header}>
                 <div style={styles.brand}>
                     <PhoneIcon />
-                    <span>CC Agent Console: Service Assignment</span>
-                </div>
-                <div style={styles.headerRight}>
-                    <span style={styles.clock}>{currentTime}</span>
-                    <div style={styles.avatar}>AG</div>
+                    <span>CC Agent Console: Services</span>
                 </div>
             </header>
 
             <div style={styles.mainLayout}>
-                <CallContext ticketId={ticketId} phoneNumber={phoneNumber} requestDetails={requestDetails} />
-
-                <h1 style={{ fontSize: '1.75rem', fontWeight: '700', color: '#1f2937', marginBottom: '8px', paddingBottom: '8px', borderBottom: '1px solid #e5e7eb' }}>
-                    Select Service Categories (Multiple Allowed)
-                </h1>
+                <div style={styles.contextBox}>
+                    <h3>Active Ticket</h3>
+                    <p>Phone: {phoneNumber}</p>
+                    <p>Ticket ID: {ticketId}</p>
+                    <p>Notes: {requestDetails}</p>
+                </div>
 
                 <div style={styles.serviceGrid}>
                     {SERVICES.map((service) => {
-                        const hasSubcategories = ['Cleaning', 'Plumber', 'Carpenter'].includes(service.name);
                         const isSelected = selectedServices.hasOwnProperty(service.name);
+                        const hasSubcategories = !!getSubcategoryList(service.name);
                         return (
                             <ServiceCard
                                 key={service.name}
@@ -474,7 +397,7 @@ export default function UserServicesPage() {
                 </div>
             </div>
 
-            {showSubcategoryModal && activeModalService && activeSubcategoryList.length > 0 && (
+            {showSubcategoryModal && activeModalService && (
                 <SubcategoryModal
                     service={activeModalService}
                     subcategories={activeSubcategoryList}
@@ -485,37 +408,23 @@ export default function UserServicesPage() {
             )}
 
             <div style={styles.actionBar}>
-                <div style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', gap: '8px' }}>
-                    {selectedCount > 0 ? (
-                        <>
-                            <span style={{color: '#4b5563', fontWeight: '500'}}>
-                                Selected Services: <strong style={{color: '#4f46e5'}}>{selectedCount}</strong>
-                            </span>
-                            <span style={{ color: '#10b981', fontWeight: '500', fontSize: '0.9rem' }}>
-                                ({Object.entries(selectedServices).map(([name, subs]) => 
-                                    `${name}${subs.length > 0 ? ` (${subs.length})` : ''}`
-                                ).join(', ')})
-                            </span>
-                        </>
-                    ) : (
-                        <span style={{color: '#9ca3af', fontStyle: 'italic'}}>Please select at least one service...</span>
-                    )}
-                </div>
-
-                <button
-                    style={selectedCount === 0 ? { ...styles.buttonSecondary, ...styles.buttonDisabled } : styles.buttonSecondary}
-                    disabled={selectedCount === 0}
-                    onClick={handleScheduleRedirect}>
-                    📅 Schedule Time for Service
+                {/* BACK BUTTON ADDED */}
+                <button style={styles.buttonSecondary} onClick={handleBackToDashboard}>
+                    ← Back to Call Notes
                 </button>
 
                 <button
-                    style={selectedCount === 0 ? { ...styles.buttonPrimary, ...styles.buttonDisabled } : styles.buttonPrimary}
+                    style={
+                        selectedCount === 0
+                            ? { ...styles.buttonPrimary, ...styles.buttonDisabled }
+                            : styles.buttonPrimary
+                    }
                     disabled={selectedCount === 0}
-                    onClick={handleConfirmAndContinue}>
-                    Confirm and Continue →
+                    onClick={handleConfirmAndContinue}
+                >
+                    Confirm & Continue →
                 </button>
             </div>
         </div>
     );
-}  
+}
