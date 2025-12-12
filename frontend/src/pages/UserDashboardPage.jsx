@@ -101,8 +101,6 @@ fetchAddresses();
 }, [userId, location.state]);
 
 
-};
-    // --------------------------------------------------------
 
     // --- INLINE STYLES ADAPTED FOR COMPILATION ---
     const styles = {
@@ -471,6 +469,7 @@ fetchAddresses();
         </div>
     );
 }
+
 
 
 
