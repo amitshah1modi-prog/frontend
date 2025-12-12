@@ -5,7 +5,8 @@ import { BACKEND_URL } from '../config';
 
 export default function UserDashboardPage() {
 
-    const { userId } = useParams();
+   const userId = location.state?.userId || useParams().userId;
+
     const location = useLocation();
     const queryParams = new URLSearchParams(location.search);
     const phoneNumber = queryParams.get('phoneNumber');
@@ -192,14 +193,13 @@ export default function UserDashboardPage() {
                 console.warn("Could not save to localStorage:", e);
             }
 
-            navigate('/user/services', {
-                state: {
-                    ticketId: ticketId,
-                    requestDetails: result.requestDetails || notes.trim(),
-                    selectedAddressId: selectedAddressId,
-                    phoneNumber: phoneNumber,
-                }
-            });
+           navigate(`/user/dashboard/${result.user_id}?phoneNumber=${callerNumber}`, {
+    state: {
+        userId: result.user_id,   // 🔥 this is the correct id
+        ticketId: result.ticketId,
+        phoneNumber: callerNumber
+    }
+});
 
         } catch (error) {
             console.error('API Error:', error);
@@ -578,4 +578,5 @@ export default function UserDashboardPage() {
         </div>
     );
 }
+
 
