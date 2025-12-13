@@ -22,10 +22,18 @@ const TicketIcon = (props) => (
         <path d="M5 5H3a2 2 0 0 0-2 2v10a2 2 0 0 0 2 2h2a2 2 0 0 0 2-2V7a2 2 0 0 0-2-2z"></path>
     </svg>
 );
-// --------------------------------------------------------------------------------------
+const ListIcon = (props) => (
+    <svg {...props} width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <line x1="8" y1="6" x2="21" y2="6"></line>
+        <line x1="8" y1="12" x2="21" y2="12"></line>
+        <line x1="8" y1="18" x2="21" y2="18"></line>
+        <line x1="3" y1="6" x2="3.01" y2="6"></line>
+        <line x1="3" y1="12" x2="3.01" y2="12"></line>
+        <line x1="3" y1="18" x2="3.01" y2="18"></line>
+    </svg>
+);
 
-
-// Subcategory data (All data blocks are kept the same)
+// --- Data (Unchanged) ---
 const PLUMBER_SUBCATEGORIES = [
     { name: 'Shower Head Repair', icon: '🚿' }, { name: 'Diverter Repair', icon: '🔧' },
     { name: 'Waste Pipe Repair', icon: '💧' }, { name: 'Sink Drainage Repair', icon: '🍽️' },
@@ -102,7 +110,7 @@ const styles = {
     container: {
         display: 'flex', flexDirection: 'column', minHeight: '100vh',
         fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
-        backgroundColor: '#eef2f6', // Lighter, professional background
+        backgroundColor: '#eef2f6', 
         color: '#1f2937',
     },
     // **Header (Consistent with Dashboard)**
@@ -118,32 +126,44 @@ const styles = {
         maxWidth: '1300px', margin: '0 auto', padding: '32px 24px', flex: 1, width: '100%',
         display: 'flex', flexDirection: 'column', gap: '32px',
     },
-    // **Service Card Grid - FIXED WITH FLEXBOX**
+    // **Service Grid - STABLE FLEXBOX LAYOUT**
     serviceGrid: {
         display: 'flex',
-        flexWrap: 'wrap', // Allows items to wrap to the next line
-        margin: '-12px', // Counteracts the margin applied to children
+        flexWrap: 'wrap', 
+        margin: '-12px', // Counteracts the margin applied to children (12px on all sides)
         marginBottom: '100px', 
         width: '100%',
     },
-    // **Context Box**
+    // **Section Header Banner**
+    sectionHeader: {
+        backgroundColor: '#ffffff', // White background
+        padding: '15px 20px', 
+        borderRadius: '8px', 
+        borderLeft: '5px solid #4f46e5', // Prominent left border
+        boxShadow: '0 2px 4px rgba(0, 0, 0, 0.05)',
+        display: 'flex',
+        alignItems: 'center',
+        gap: '10px'
+    },
+    // **Context Box - Adjusted Max Width**
     contextBox: {
-        width: '100%', maxWidth: '700px', margin: '0 auto', zIndex: 10, padding: '20px',
-        borderRadius: '12px', backgroundColor: 'white', border: '1px solid #a5b4fc', // Blue border
+        width: '100%', maxWidth: '650px', margin: '0 auto', zIndex: 10, padding: '20px', // Reduced to 650px
+        borderRadius: '12px', backgroundColor: 'white', border: '1px solid #a5b4fc', 
         boxShadow: '0 4px 10px rgba(0, 0, 0, 0.08)',
     },
     contextHighlight: {
         fontFamily: 'monospace', backgroundColor: '#eef2ff', padding: '3px 8px',
         borderRadius: '6px', color: '#4f46e5', fontWeight: '700'
     },
-    // **Action Bar (Footer)**
+    // **Action Bar (Footer) - Font refinement**
     actionBar: {
         position: 'fixed', bottom: 0, left: 0, right: 0, backgroundColor: 'white',
         borderTop: '1px solid #d1d5db', padding: '16px 30px', display: 'flex',
         justifyContent: 'flex-end', gap: '16px', boxShadow: '0 -4px 12px rgba(0, 0, 0, 0.1)', zIndex: 50,
+        fontSize: '0.9rem', // Slightly smaller text for cleaner footer
     },
     buttonPrimary: {
-        backgroundColor: '#34d399', // Professional Green
+        backgroundColor: '#34d399', 
         color: 'white', padding: '14px 28px', borderRadius: '8px',
         fontWeight: '700', border: 'none', cursor: 'pointer', fontSize: '1rem',
         boxShadow: '0 4px 6px -1px rgba(52, 211, 153, 0.4)', transition: 'background-color 0.2s',
@@ -156,9 +176,9 @@ const styles = {
     buttonDisabled: {
         opacity: 0.6, cursor: 'not-allowed', backgroundColor: '#e5e7eb', boxShadow: 'none', color: '#6b7280',
     },
-    // **Modal Styling**
+    // **Modal Styling (No changes needed)**
     modalOverlay: {
-        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(28, 46, 74, 0.7)', // Darker overlay
+        position: 'fixed', top: 0, left: 0, right: 0, bottom: 0, backgroundColor: 'rgba(28, 46, 74, 0.7)', 
         display: 'flex', justifyContent: 'center', alignItems: 'center', zIndex: 100,
         backdropFilter: 'blur(3px)',
     },
@@ -170,7 +190,6 @@ const styles = {
         display: 'flex',
         flexDirection: 'column',
     },
-    // **SUBCATEGORY GRID**
     subcategoryGrid: {
         display: 'grid',
         gridTemplateColumns: 'repeat(2, 1fr)', 
@@ -179,7 +198,6 @@ const styles = {
         padding: '10px 0',
         borderTop: '1px solid #f3f4f6',
     },
-    // **SUBCATEGORY CARD FIX**
     subcategoryCard: {
         padding: '18px 15px',
         borderRadius: '10px',
@@ -189,7 +207,6 @@ const styles = {
         cursor: 'pointer',
         transition: 'all 0.2s',
     },
-    // **Modal Selected List**
     selectedSubList: {
         marginTop: '20px',
         padding: '15px',
@@ -199,7 +216,7 @@ const styles = {
     }
 };
 
-// --- Custom Components with Updated Styles ---
+// --- Custom Components with Stable Layout Logic ---
 
 const ServiceCard = ({ service, onClick, isSelected, hasSubcategories }) => {
     const [isHovered, setIsHovered] = useState(false);
@@ -211,9 +228,9 @@ const ServiceCard = ({ service, onClick, isSelected, hasSubcategories }) => {
     };
 
     const cardStyle = {
-        // --- KEY FIX FOR SPACING ---
-        flex: '0 0 calc(33.333% - 24px)', // Take up 1/3 of the width minus the total margin
-        margin: '12px', // 12px margin on all sides, resulting in 24px gap between cards
+        // --- FINAL STABILITY FIX ---
+        flex: '0 0 calc(33.333% - 24px)', // 3 cards per row: 33.333% width - 2*12px margin
+        margin: '12px', // 12px margin on all sides guarantees 24px gap between cards
         
         backgroundColor: isSelected ? '#eef2ff' : 'white',
         padding: '30px', 
@@ -248,13 +265,12 @@ const ServiceCard = ({ service, onClick, isSelected, hasSubcategories }) => {
                     </span>
                 )}
             </div>
-            <h3 style={{ fontSize: '1.3rem', fontWeight: '800', color: '#1f2937', marginBottom: '8px', marginTop: '10px' }}>{service.name}</h3>
+            <h3 style={{ fontSize: '1.3rem', fontWeight: '800', color: '#1c2e4a', marginBottom: '8px', marginTop: '10px' }}>{service.name}</h3>
             <p style={{ fontSize: '0.9rem', color: '#6b7280', flex: 1, lineHeight: '1.5' }}>{service.description}</p>
         </div>
     );
 };
 
-// --- CORRECTED SUBCATEGORY CARD (Text truncation fix maintained) ---
 const SubcategoryCard = ({ subcategory, isSelected, onClick }) => {
     const [isHovered, setIsHovered] = useState(false);
     
@@ -279,8 +295,8 @@ const SubcategoryCard = ({ subcategory, isSelected, onClick }) => {
         fontWeight: isSelected ? '700' : '600',
         overflow: 'hidden', 
         textOverflow: 'ellipsis', 
-        whiteSpace: 'nowrap', // Crucial for preventing text overflow from breaking the card
-        minWidth: 0, // Allows text-overflow to work correctly in flex container
+        whiteSpace: 'nowrap', 
+        minWidth: 0, 
     }
 
     return (
@@ -299,7 +315,6 @@ const SubcategoryCard = ({ subcategory, isSelected, onClick }) => {
     );
 };
 
-// --- SUBCATEGORY MODAL (Layout structure confirmed stable) ---
 const SubcategoryModal = ({ service, subcategories, initialSelection, onSave, onClose }) => {
     const [tempSelection, setTempSelection] = useState(initialSelection || []);
 
@@ -379,8 +394,6 @@ const SubcategoryModal = ({ service, subcategories, initialSelection, onSave, on
         </div>
     );
 };
-// --------------------------------------------------------------------------------------
-
 
 const CallContext = ({ ticketId, phoneNumber, requestDetails }) => {
     return (
@@ -411,7 +424,7 @@ export default function UserServicesPage() {
     const selectedAddressId = location.state?.selectedAddressId;
     const phoneNumber = location.state?.phoneNumber;
 
-    const [selectedServices, setSelectedServices] = useState({}); // { serviceName: [subcategories] }
+    const [selectedServices, setSelectedServices] = useState({}); 
     const [showSubcategoryModal, setShowSubcategoryModal] = useState(false);
     const [activeModalService, setActiveModalService] = useState(null);
     const [activeSubcategoryList, setActiveSubcategoryList] = useState([]);
@@ -560,14 +573,19 @@ export default function UserServicesPage() {
             <div style={styles.mainLayout}>
                 <CallContext ticketId={ticketId} phoneNumber={phoneNumber} requestDetails={requestDetails} />
 
-                <h1 style={{ fontSize: '2rem', fontWeight: '800', color: '#1c2e4a', marginBottom: '10px', paddingBottom: '12px', borderBottom: '2px solid #e5e7eb' }}>
-                    Select Service Categories
-                </h1>
-                <p style={{fontSize: '1rem', color: '#4b5563'}}>
-                    Click on the card to select a service. Services that require specific tasks (🔗) will prompt a sub-service selection window.
+                {/* VISUAL HEADER BANNER */}
+                <div style={styles.sectionHeader}>
+                    <ListIcon width="30" height="30" style={{color: '#1c2e4a'}} />
+                    <h1 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#1c2e4a', margin: 0 }}>
+                        Select Service Categories
+                    </h1>
+                </div>
+                
+                <p style={{fontSize: '1rem', color: '#4b5563', marginTop: '-15px'}}>
+                    Choose the primary category for the customer's request. Cards with "🔗 Sub-Services" require further selection.
                 </p>
 
-                {/* SERVICE GRID (NOW FLEXBOX FOR STABILITY) */}
+                {/* SERVICE GRID (STABLE FLEXBOX) */}
                 <div style={styles.serviceGrid}>
                     {SERVICES.map((service) => {
                         const hasSubcategories = ['Cleaning', 'Plumber', 'Carpenter'].includes(service.name);
@@ -601,17 +619,17 @@ export default function UserServicesPage() {
                 <div style={{ marginRight: 'auto', display: 'flex', alignItems: 'center', gap: '15px' }}>
                     {selectedCount > 0 ? (
                         <>
-                            <span style={{color: '#1c2e4a', fontWeight: '700', fontSize: '1.1rem'}}>
+                            <span style={{color: '#1c2e4a', fontWeight: '700', fontSize: '1.0rem'}}>
                                 Total Services Selected: <strong style={{color: '#4f46e5'}}>{selectedCount}</strong>
                             </span>
-                            <span style={{ color: '#065f46', fontWeight: '600', fontSize: '0.9rem', backgroundColor: '#d1fae5', padding: '5px 10px', borderRadius: '6px' }}>
+                            <span style={{ color: '#065f46', fontWeight: '600', fontSize: '0.85rem', backgroundColor: '#d1fae5', padding: '5px 10px', borderRadius: '6px' }}>
                                 Details: {Object.entries(selectedServices).map(([name, subs]) => 
                                     `${name}${subs.length > 0 ? ` (${subs.length})` : ''}`
                                 ).join(', ')}
                             </span>
                         </>
                     ) : (
-                        <span style={{color: '#9ca3af', fontStyle: 'italic', fontSize: '1rem'}}>Awaiting service selection...</span>
+                        <span style={{color: '#9ca3af', fontStyle: 'italic', fontSize: '0.9rem'}}>Awaiting service selection...</span>
                     )}
                 </div>
 
