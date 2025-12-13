@@ -199,200 +199,212 @@ const styles = {
         height: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: '#f4f6f8',
-        fontFamily: '"Inter", "Segoe UI", Roboto, system-ui, sans-serif',
-        color: '#1f2937',
+        backgroundColor: '#0b0f14',
+        color: '#e5e7eb',
+        fontFamily: '"JetBrains Mono", "Inter", system-ui, monospace',
     },
 
-    /* ===== HEADER ===== */
+    /* ===== TOP BAR (STATUS STRIP) ===== */
     header: {
-        height: '56px',
-        backgroundColor: '#ffffff',
-        borderBottom: '1px solid #d1d5db',
+        height: '48px',
+        backgroundColor: '#05070a',
+        borderBottom: '1px solid #1f2937',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 24px',
+        padding: '0 20px',
     },
     brand: {
         display: 'flex',
         alignItems: 'center',
         gap: '10px',
-        fontSize: '0.875rem',
-        fontWeight: '600',
-        color: '#111827',
+        fontSize: '0.75rem',
+        letterSpacing: '0.08em',
+        textTransform: 'uppercase',
+        color: '#93c5fd',
     },
     headerRight: {
         display: 'flex',
         alignItems: 'center',
-        gap: '16px',
-        fontSize: '0.75rem',
-        color: '#374151',
+        gap: '18px',
+        fontSize: '0.7rem',
+        color: '#9ca3af',
     },
     clock: {
         fontFamily: 'monospace',
-        color: '#6b7280',
+        color: '#60a5fa',
     },
     avatar: {
-        height: '28px',
-        padding: '0 10px',
-        borderRadius: '4px',
-        backgroundColor: '#e5e7eb',
-        fontWeight: '600',
-        fontSize: '0.75rem',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'center',
+        padding: '4px 8px',
+        border: '1px solid #1f2937',
+        fontSize: '0.65rem',
+        letterSpacing: '0.1em',
+        color: '#a5b4fc',
     },
 
-    /* ===== LAYOUT GRID ===== */
+    /* ===== CORE GRID ===== */
     main: {
         flex: 1,
         display: 'grid',
-        gridTemplateColumns: '320px 1fr',
-        gap: '0',
+        gridTemplateColumns: '340px 1fr',
+        backgroundColor: '#0b0f14',
     },
 
+    /* ===== LEFT RAIL ===== */
     sidebar: {
-        backgroundColor: '#ffffff',
-        borderRight: '1px solid #d1d5db',
+        borderRight: '1px solid #1f2937',
         padding: '16px',
-        overflowY: 'auto',
-    },
-
-    contentArea: {
-        backgroundColor: '#ffffff',
         display: 'flex',
         flexDirection: 'column',
+        gap: '14px',
+        overflowY: 'auto',
+        background:
+            'linear-gradient(180deg, #0b0f14 0%, #070a0f 100%)',
     },
 
-    /* ===== CARDS ===== */
+    /* ===== RIGHT PANEL ===== */
+    contentArea: {
+        display: 'flex',
+        flexDirection: 'column',
+        background:
+            'radial-gradient(circle at top, #0f172a 0%, #020617 70%)',
+    },
+
+    /* ===== MODULE BLOCKS ===== */
     card: {
-        border: '1px solid #d1d5db',
-        padding: '12px',
-        marginBottom: '12px',
-        backgroundColor: '#ffffff',
+        border: '1px solid #1f2937',
+        backgroundColor: '#020617',
+        padding: '14px',
     },
 
     title: {
-        fontSize: '1rem',
+        fontSize: '0.8rem',
         fontWeight: '600',
+        letterSpacing: '0.12em',
+        textTransform: 'uppercase',
+        color: '#38bdf8',
         padding: '12px 16px',
-        borderBottom: '1px solid #d1d5db',
-        backgroundColor: '#f9fafb',
+        borderBottom: '1px solid #1f2937',
+        backgroundColor: '#020617',
     },
 
-    /* ===== NOTES ===== */
+    /* ===== NOTES TERMINAL ===== */
     notesTextarea: {
         flex: 1,
+        backgroundColor: '#020617',
+        color: '#e5e7eb',
         border: 'none',
         outline: 'none',
-        padding: '16px',
-        fontSize: '0.875rem',
-        lineHeight: '1.6',
+        padding: '20px',
+        fontSize: '0.85rem',
+        lineHeight: '1.7',
         resize: 'none',
-        fontFamily: 'inherit',
+        fontFamily: '"JetBrains Mono", monospace',
+        caretColor: '#38bdf8',
     },
 
-    /* ===== INFO ===== */
+    /* ===== INFO SYSTEM ===== */
     userInfoTitle: {
-        fontSize: '0.7rem',
-        fontWeight: '600',
+        fontSize: '0.65rem',
+        letterSpacing: '0.14em',
         textTransform: 'uppercase',
-        color: '#6b7280',
+        color: '#64748b',
         marginBottom: '8px',
     },
     infoRow: {
         display: 'flex',
         justifyContent: 'space-between',
-        alignItems: 'center',
         padding: '6px 0',
-        borderBottom: '1px solid #f3f4f6',
-        fontSize: '0.8rem',
+        fontSize: '0.75rem',
+        borderBottom: '1px dashed #1f2937',
     },
     infoKey: {
-        color: '#6b7280',
+        color: '#94a3b8',
     },
     infoVal: {
+        color: '#e5e7eb',
         fontWeight: '600',
-        color: '#111827',
     },
 
     subscriptionBadge: {
+        border: '1px solid #22d3ee',
         padding: '2px 8px',
-        border: '1px solid #9ca3af',
-        fontSize: '0.65rem',
-        fontWeight: '600',
+        fontSize: '0.6rem',
+        color: '#22d3ee',
+        letterSpacing: '0.1em',
     },
 
     phoneNumberDisplay: {
         fontFamily: 'monospace',
-        backgroundColor: '#f3f4f6',
+        backgroundColor: '#020617',
+        border: '1px solid #1f2937',
         padding: '2px 6px',
-        borderRadius: '2px',
+        color: '#38bdf8',
     },
 
-    /* ===== ADDRESS ===== */
+    /* ===== ADDRESS MATRIX ===== */
     addressItem: {
-        padding: '8px',
-        border: '1px solid #d1d5db',
-        marginBottom: '6px',
-        fontSize: '0.8rem',
+        padding: '10px',
+        border: '1px solid #1f2937',
+        fontSize: '0.75rem',
         cursor: 'pointer',
-        backgroundColor: '#ffffff',
+        backgroundColor: '#020617',
+        transition: 'all 0.15s linear',
     },
     addressSelected: {
-        backgroundColor: '#e5e7eb',
-        fontWeight: '600',
+        borderColor: '#38bdf8',
+        backgroundColor: '#020617',
+        boxShadow: 'inset 0 0 0 1px #38bdf8',
     },
 
     /* ===== ORDERS ===== */
     orderCard: {
-        border: '1px solid #fca5a5',
-        backgroundColor: '#fef2f2',
-        padding: '10px',
+        border: '1px solid #7f1d1d',
+        backgroundColor: '#020617',
+        padding: '12px',
         marginBottom: '8px',
     },
     orderHeader: {
         display: 'flex',
         justifyContent: 'space-between',
-        fontSize: '0.75rem',
-        fontWeight: '600',
-        color: '#7f1d1d',
-        marginBottom: '4px',
+        fontSize: '0.7rem',
+        letterSpacing: '0.08em',
+        color: '#fca5a5',
+        marginBottom: '6px',
     },
     cancelBtn: {
         width: '100%',
-        backgroundColor: '#b91c1c',
-        color: '#ffffff',
-        border: 'none',
+        backgroundColor: 'transparent',
+        border: '1px solid #ef4444',
+        color: '#ef4444',
         padding: '6px',
-        fontSize: '0.7rem',
-        fontWeight: '600',
+        fontSize: '0.65rem',
+        letterSpacing: '0.1em',
         cursor: 'pointer',
-        marginTop: '6px',
+        marginTop: '8px',
     },
 
-    /* ===== ACTION ===== */
+    /* ===== ACTION STRIP ===== */
     saveButton: {
-        backgroundColor: '#2563eb',
-        color: '#ffffff',
-        border: 'none',
-        padding: '10px 20px',
-        fontSize: '0.8rem',
-        fontWeight: '600',
+        backgroundColor: '#020617',
+        border: '1px solid #38bdf8',
+        color: '#38bdf8',
+        padding: '10px 22px',
+        fontSize: '0.7rem',
+        letterSpacing: '0.14em',
         cursor: 'pointer',
+        textTransform: 'uppercase',
     },
     message: {
         marginRight: '12px',
-        fontSize: '0.75rem',
-        fontWeight: '600',
+        fontSize: '0.7rem',
+        letterSpacing: '0.08em',
     },
     emptyState: {
+        fontSize: '0.7rem',
+        color: '#64748b',
         textAlign: 'center',
-        fontSize: '0.75rem',
-        color: '#6b7280',
-        padding: '12px',
+        padding: '10px',
     },
 };
 
@@ -532,6 +544,7 @@ const styles = {
         </div>
     );
 }
+
 
 
 
