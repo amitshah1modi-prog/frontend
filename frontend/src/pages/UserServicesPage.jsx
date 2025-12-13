@@ -118,11 +118,13 @@ const styles = {
         maxWidth: '1300px', margin: '0 auto', padding: '32px 24px', flex: 1, width: '100%',
         display: 'flex', flexDirection: 'column', gap: '32px',
     },
-    // **Service Card Grid**
+    // **Service Card Grid - FIXED GAP**
     serviceGrid: {
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', // Slightly wider columns
-        gap: '24px', // Increased gap
-        marginBottom: '100px', width: '100%',
+        display: 'grid', 
+        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
+        gap: '24px', // Increased gap for better spacing
+        marginBottom: '100px', 
+        width: '100%',
     },
     // **Context Box**
     contextBox: {
@@ -162,21 +164,22 @@ const styles = {
     },
     modalContent: {
         backgroundColor: 'white', borderRadius: '14px', width: '90%', maxWidth: '900px',
-        maxHeight: '90vh', overflowY: 'hidden', // Control scrolling internally
+        maxHeight: '90vh', overflowY: 'hidden', 
         padding: '30px',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)',
         display: 'flex',
         flexDirection: 'column',
     },
-    // **IMPROVED SUBCATEGORY STYLES**
+    // **SUBCATEGORY GRID FIX**
     subcategoryGrid: {
         display: 'grid',
-        gridTemplateColumns: 'repeat(2, 1fr)', // Two-column layout for efficiency
+        gridTemplateColumns: 'repeat(2, 1fr)', 
         gap: '20px',
         marginTop: '20px',
         padding: '10px 0',
         borderTop: '1px solid #f3f4f6',
     },
+    // **SUBCATEGORY CARD FIX**
     subcategoryCard: {
         padding: '18px 15px',
         borderRadius: '10px',
@@ -185,8 +188,6 @@ const styles = {
         alignItems: 'center',
         cursor: 'pointer',
         transition: 'all 0.2s',
-        // --- FIX FOR OVERLAPPING TEXT ---
-        minWidth: 0, // Ensure the flex item respects its parent's width constraints
     },
     // **Modal Selected List**
     selectedSubList: {
@@ -260,8 +261,9 @@ const SubcategoryCard = ({ subcategory, isSelected, onClick }) => {
     };
 
     const iconStyle = {
-        fontSize: '1.5rem', marginRight: '15px',
-        flexShrink: 0, // Ensure icon doesn't shrink
+        fontSize: '1.5rem', 
+        marginRight: '15px',
+        flexShrink: 0,
     };
 
     const nameStyle = {
@@ -269,7 +271,7 @@ const SubcategoryCard = ({ subcategory, isSelected, onClick }) => {
         fontWeight: isSelected ? '700' : '600',
         overflow: 'hidden', 
         textOverflow: 'ellipsis', 
-        whiteSpace: 'nowrap', // Force text onto a single line to prevent layout break
+        whiteSpace: 'nowrap', // Crucial for preventing text overflow from breaking the card
         minWidth: 0, // Allows text-overflow to work correctly in flex container
     }
 
