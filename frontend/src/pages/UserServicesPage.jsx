@@ -162,8 +162,11 @@ const styles = {
     },
     modalContent: {
         backgroundColor: 'white', borderRadius: '14px', width: '90%', maxWidth: '900px',
-        maxHeight: '90vh', overflowY: 'auto', padding: '30px',
+        maxHeight: '90vh', overflowY: 'hidden', // Control scrolling internally
+        padding: '30px',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)',
+        display: 'flex',
+        flexDirection: 'column',
     },
     // **IMPROVED SUBCATEGORY STYLES**
     subcategoryGrid: {
@@ -175,13 +178,15 @@ const styles = {
         borderTop: '1px solid #f3f4f6',
     },
     subcategoryCard: {
-        padding: '15px',
+        padding: '18px 15px',
         borderRadius: '10px',
         border: '2px solid #e5e7eb',
         display: 'flex',
         alignItems: 'center',
         cursor: 'pointer',
         transition: 'all 0.2s',
+        // --- FIX FOR OVERLAPPING TEXT ---
+        minWidth: 0, // Ensure the flex item respects its parent's width constraints
     },
     // **Modal Selected List**
     selectedSubList: {
@@ -240,23 +245,33 @@ const ServiceCard = ({ service, onClick, isSelected, hasSubcategories }) => {
     );
 };
 
-// --- IMPROVED SUBCATEGORY CARD ---
+// --- CORRECTED SUBCATEGORY CARD ---
 const SubcategoryCard = ({ subcategory, isSelected, onClick }) => {
     const [isHovered, setIsHovered] = useState(false);
     
     const cardStyle = {
         ...styles.subcategoryCard,
-        backgroundColor: isSelected ? '#eef2ff' : 'white', // Light blue background for professional selection
+        backgroundColor: isSelected ? '#eef2ff' : 'white', 
         color: isSelected ? '#1c2e4a' : '#1f2937',
         borderColor: isSelected ? '#4f46e5' : isHovered ? '#d1d5db' : '#e5e7eb',
         boxShadow: isSelected ? '0 2px 5px rgba(79, 70, 229, 0.2)' : 'none',
         transform: isHovered ? 'scale(1.01)' : 'scale(1)',
-        padding: '18px 15px'
+        padding: '18px 15px',
     };
 
     const iconStyle = {
         fontSize: '1.5rem', marginRight: '15px',
+        flexShrink: 0, // Ensure icon doesn't shrink
     };
+
+    const nameStyle = {
+        fontSize: '0.95rem', 
+        fontWeight: isSelected ? '700' : '600',
+        overflow: 'hidden', 
+        textOverflow: 'ellipsis', 
+        whiteSpace: 'nowrap', // Force text onto a single line to prevent layout break
+        minWidth: 0, // Allows text-overflow to work correctly in flex container
+    }
 
     return (
         <div 
@@ -266,15 +281,15 @@ const SubcategoryCard = ({ subcategory, isSelected, onClick }) => {
             onMouseLeave={() => setIsHovered(false)}
         >
             <span style={iconStyle}>{subcategory.icon}</span>
-            <span style={{ fontSize: '0.95rem', fontWeight: isSelected ? '700' : '600' }}>
+            <span style={nameStyle}>
                 {subcategory.name}
             </span>
-            {isSelected && <span style={{ marginLeft: 'auto', color: '#4f46e5' }}>✓</span>}
+            {isSelected && <span style={{ marginLeft: 'auto', color: '#4f46e5', flexShrink: 0 }}>✓</span>}
         </div>
     );
 };
 
-// --- IMPROVED SUBCATEGORY MODAL ---
+// --- CORRECTED SUBCATEGORY MODAL ---
 const SubcategoryModal = ({ service, subcategories, initialSelection, onSave, onClose }) => {
     const [tempSelection, setTempSelection] = useState(initialSelection || []);
 
@@ -290,20 +305,21 @@ const SubcategoryModal = ({ service, subcategories, initialSelection, onSave, on
 
     return (
         <div style={styles.modalOverlay}>
-            <div style={styles.modalContent}>
-                <div style={{ backgroundColor: service.color, padding: '15px 20px', borderRadius: '10px 10px 0 0', margin: '-30px -30px 20px -30px', display: 'flex', alignItems: 'center' }}>
+            <div style={{...styles.modalContent, maxHeight: '90vh'}}>
+                {/* Modal Header */}
+                <div style={{ backgroundColor: service.color, padding: '15px 20px', borderRadius: '10px 10px 0 0', margin: '-30px -30px 20px -30px', display: 'flex', alignItems: 'center', flexShrink: 0 }}>
                      <span style={{fontSize: '2.5rem', marginRight: '15px'}}>{service.icon}</span>
                      <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#1c2e4a' }}>
                         Define **{service.name}** Service Tasks
                     </h2>
                 </div>
                
-                <p style={{ color: '#4b5563', marginBottom: '15px', fontSize: '1rem', borderBottom: '1px solid #e5e7eb', paddingBottom: '15px' }}>
+                <p style={{ color: '#4b5563', marginBottom: '15px', fontSize: '1rem', borderBottom: '1px solid #e5e7eb', paddingBottom: '15px', flexShrink: 0 }}>
                     Select all specific tasks the customer is requesting to accurately scope the service.
                 </p>
                 
-                {/* Scrollable Grid Area */}
-                <div style={{maxHeight: '400px', overflowY: 'auto', paddingRight: '15px'}}>
+                {/* Scrollable Grid Area (Takes up max space) */}
+                <div style={{flexGrow: 1, overflowY: 'auto', paddingRight: '15px'}}>
                     <div style={styles.subcategoryGrid}>
                         {subcategories.map(sub => (
                             <SubcategoryCard key={sub.name} subcategory={sub}
@@ -312,39 +328,42 @@ const SubcategoryModal = ({ service, subcategories, initialSelection, onSave, on
                     </div>
                 </div>
 
-                {/* Footer Action Area */}
-                <div style={{ ...styles.selectedSubList, marginTop: '30px' }}>
-                    <p style={{ fontWeight: '700', color: '#4f46e5', marginBottom: '10px' }}>
-                        Selected Items ({tempSelection.length}):
-                    </p>
-                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', minHeight: '30px' }}>
-                        {tempSelection.length > 0 ? (
-                            tempSelection.map(name => (
-                                <span key={name} style={{
-                                    backgroundColor: '#4f46e5', color: 'white', padding: '5px 10px',
-                                    borderRadius: '5px', fontSize: '0.85rem', fontWeight: '500',
-                                    display: 'flex', alignItems: 'center'
-                                }}>
-                                    {name}
+                {/* Footer Action Area (Fixed height) */}
+                <div style={{ flexShrink: 0 }}>
+                    <div style={styles.selectedSubList}>
+                        <p style={{ fontWeight: '700', color: '#4f46e5', marginBottom: '10px' }}>
+                            Selected Items ({tempSelection.length}):
+                        </p>
+                        <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', maxHeight: '100px', overflowY: 'auto', padding: '5px 0' }}>
+                            {tempSelection.length > 0 ? (
+                                tempSelection.map(name => (
+                                    <span key={name} style={{
+                                        backgroundColor: '#4f46e5', color: 'white', padding: '5px 10px',
+                                        borderRadius: '5px', fontSize: '0.85rem', fontWeight: '500',
+                                        display: 'flex', alignItems: 'center', flexShrink: 0
+                                    }}>
+                                        {name}
+                                    </span>
+                                ))
+                            ) : (
+                                <span style={{ color: '#9ca3af', fontStyle: 'italic', fontSize: '0.85rem' }}>
+                                    No items selected. Please select tasks before confirming.
                                 </span>
-                            ))
-                        ) : (
-                            <span style={{ color: '#9ca3af', fontStyle: 'italic', fontSize: '0.85rem' }}>
-                                No items selected. Please select tasks before confirming.
-                            </span>
-                        )}
+                            )}
+                        </div>
                     </div>
-                </div>
 
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', paddingTop: '20px', borderTop: '1px solid #e5e7eb', marginTop: '20px' }}>
-                    <button style={{ ...styles.buttonSecondary, padding: '10px 20px' }} onClick={onClose}>
-                        <span style={{fontWeight: '500'}}>Go Back</span>
-                    </button>
-                    <button
-                        style={tempSelection.length === 0 ? { ...styles.buttonPrimary, ...styles.buttonDisabled, padding: '10px 20px' } : { ...styles.buttonPrimary, padding: '10px 20px', backgroundColor: '#4f46e5' }}
-                        onClick={handleSave}>
-                        Confirm and Save ({tempSelection.length} Items)
-                    </button>
+                    <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', paddingTop: '20px', borderTop: '1px solid #e5e7eb', marginTop: '20px' }}>
+                        <button style={{ ...styles.buttonSecondary, padding: '10px 20px' }} onClick={onClose}>
+                            <span style={{fontWeight: '500'}}>Go Back</span>
+                        </button>
+                        <button
+                            style={tempSelection.length === 0 ? { ...styles.buttonPrimary, ...styles.buttonDisabled, padding: '10px 20px' } : { ...styles.buttonPrimary, padding: '10px 20px', backgroundColor: '#4f46e5' }}
+                            onClick={handleSave}
+                            disabled={tempSelection.length === 0}>
+                            Confirm and Save ({tempSelection.length} Items)
+                        </button>
+                    </div>
                 </div>
             </div>
         </div>
