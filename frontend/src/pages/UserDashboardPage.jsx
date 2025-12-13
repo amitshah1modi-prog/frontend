@@ -199,8 +199,8 @@ const styles = {
         height: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: '#f1f3f6',
-        fontFamily: '"Segoe UI", Roboto, system-ui, sans-serif',
+        backgroundColor: '#f4f6f8',
+        fontFamily: '"Inter", "Segoe UI", Roboto, system-ui, sans-serif',
         color: '#1f2937',
     },
 
@@ -215,18 +215,18 @@ const styles = {
         padding: '0 24px',
     },
     brand: {
-        fontSize: '0.9rem',
-        fontWeight: '600',
-        color: '#111827',
         display: 'flex',
         alignItems: 'center',
         gap: '10px',
+        fontSize: '0.875rem',
+        fontWeight: '600',
+        color: '#111827',
     },
     headerRight: {
         display: 'flex',
         alignItems: 'center',
-        gap: '20px',
-        fontSize: '0.8rem',
+        gap: '16px',
+        fontSize: '0.75rem',
         color: '#374151',
     },
     clock: {
@@ -238,46 +238,46 @@ const styles = {
         padding: '0 10px',
         borderRadius: '4px',
         backgroundColor: '#e5e7eb',
-        fontSize: '0.75rem',
         fontWeight: '600',
+        fontSize: '0.75rem',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
     },
 
-    /* ===== LAYOUT ===== */
+    /* ===== LAYOUT GRID ===== */
     main: {
         flex: 1,
         display: 'grid',
-        gridTemplateColumns: '300px 1fr 340px',
-        backgroundColor: '#e5e7eb',
-        gap: '1px',
+        gridTemplateColumns: '320px 1fr',
+        gap: '0',
     },
 
     sidebar: {
         backgroundColor: '#ffffff',
-        padding: '20px',
+        borderRight: '1px solid #d1d5db',
+        padding: '16px',
         overflowY: 'auto',
     },
 
     contentArea: {
         backgroundColor: '#ffffff',
-        padding: '0',
         display: 'flex',
         flexDirection: 'column',
     },
 
+    /* ===== CARDS ===== */
     card: {
-        backgroundColor: '#ffffff',
         border: '1px solid #d1d5db',
-        padding: '16px',
-        marginBottom: '16px',
+        padding: '12px',
+        marginBottom: '12px',
+        backgroundColor: '#ffffff',
     },
 
     title: {
         fontSize: '1rem',
         fontWeight: '600',
-        padding: '16px',
+        padding: '12px 16px',
         borderBottom: '1px solid #d1d5db',
         backgroundColor: '#f9fafb',
     },
@@ -285,31 +285,30 @@ const styles = {
     /* ===== NOTES ===== */
     notesTextarea: {
         flex: 1,
-        width: '100%',
         border: 'none',
         outline: 'none',
-        padding: '20px',
-        fontSize: '0.9rem',
+        padding: '16px',
+        fontSize: '0.875rem',
         lineHeight: '1.6',
-        fontFamily: 'inherit',
         resize: 'none',
-        backgroundColor: '#ffffff',
+        fontFamily: 'inherit',
     },
 
     /* ===== INFO ===== */
     userInfoTitle: {
-        fontSize: '0.75rem',
+        fontSize: '0.7rem',
         fontWeight: '600',
-        color: '#6b7280',
         textTransform: 'uppercase',
+        color: '#6b7280',
         marginBottom: '8px',
     },
     infoRow: {
         display: 'flex',
         justifyContent: 'space-between',
+        alignItems: 'center',
         padding: '6px 0',
-        fontSize: '0.8rem',
         borderBottom: '1px solid #f3f4f6',
+        fontSize: '0.8rem',
     },
     infoKey: {
         color: '#6b7280',
@@ -318,12 +317,12 @@ const styles = {
         fontWeight: '600',
         color: '#111827',
     },
+
     subscriptionBadge: {
         padding: '2px 8px',
         border: '1px solid #9ca3af',
         fontSize: '0.65rem',
         fontWeight: '600',
-        color: '#374151',
     },
 
     phoneNumberDisplay: {
@@ -360,6 +359,7 @@ const styles = {
         fontSize: '0.75rem',
         fontWeight: '600',
         color: '#7f1d1d',
+        marginBottom: '4px',
     },
     cancelBtn: {
         width: '100%',
@@ -368,6 +368,7 @@ const styles = {
         border: 'none',
         padding: '6px',
         fontSize: '0.7rem',
+        fontWeight: '600',
         cursor: 'pointer',
         marginTop: '6px',
     },
@@ -394,7 +395,6 @@ const styles = {
         padding: '12px',
     },
 };
-
 
     // --------------------------------------------------------
 
@@ -532,6 +532,7 @@ const styles = {
         </div>
     );
 }
+
 
 
 
