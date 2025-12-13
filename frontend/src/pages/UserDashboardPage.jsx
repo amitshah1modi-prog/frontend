@@ -195,40 +195,32 @@ export default function UserDashboardPage() {
     };
     // --------------------------------------------------------
 
-    // --- INLINE STYLES ADAPTED FOR COMPILATION ---
-   // ⚠️ LOGIC + JSX UNCHANGED
-// ⚠️ ONLY styles values improved
-
-// --- INLINE STYLES ADAPTED FOR COMPILATION ---
-const styles = {
+   const styles = {
     container: {
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
-        fontFamily: '"JetBrains Mono", monospace',
-        background: 'radial-gradient(circle at top, #020617, #000000)',
-        color: '#e5e7eb',
-        overflow: 'hidden',
+        fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+        backgroundColor: '#f8fafc',
+        color: '#0f172a',
     },
 
     /* ================= HEADER ================= */
     header: {
         height: '64px',
-        background: 'linear-gradient(90deg, #020617, #030712)',
-        color: '#22d3ee',
+        backgroundColor: '#ffffff',
+        color: '#0f172a',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 28px',
-        borderBottom: '1px solid rgba(34,211,238,0.25)',
-        boxShadow: '0 0 25px rgba(34,211,238,0.35)',
-        zIndex: 20,
+        padding: '0 32px',
+        borderBottom: '1px solid #e5e7eb',
+        zIndex: 10,
     },
     brand: {
         fontSize: '1.1rem',
-        fontWeight: '800',
-        letterSpacing: '1px',
-        textTransform: 'uppercase',
+        fontWeight: '700',
+        letterSpacing: '-0.01em',
         display: 'flex',
         alignItems: 'center',
         gap: '10px',
@@ -236,25 +228,24 @@ const styles = {
     headerRight: {
         display: 'flex',
         alignItems: 'center',
-        gap: '24px',
+        gap: '20px',
     },
     clock: {
         fontFamily: 'monospace',
-        color: '#67e8f9',
-        fontSize: '0.9rem',
+        color: '#64748b',
+        fontSize: '0.85rem',
     },
     avatar: {
-        width: '36px',
-        height: '36px',
+        width: '34px',
+        height: '34px',
         borderRadius: '50%',
-        background: 'linear-gradient(135deg, #22d3ee, #6366f1)',
+        backgroundColor: '#e5e7eb',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: '0.85rem',
-        fontWeight: '800',
-        color: '#020617',
-        boxShadow: '0 0 20px rgba(99,102,241,0.9)',
+        fontSize: '0.8rem',
+        fontWeight: '700',
+        color: '#0f172a',
     },
 
     /* ================= LAYOUT ================= */
@@ -265,183 +256,165 @@ const styles = {
     },
     sidebar: {
         width: '340px',
-        background: 'linear-gradient(180deg, #020617, #020617)',
-        borderRight: '1px solid rgba(99,102,241,0.25)',
+        backgroundColor: '#ffffff',
+        borderRight: '1px solid #e5e7eb',
         padding: '24px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '24px',
+        gap: '20px',
         overflowY: 'auto',
-        boxShadow: 'inset -10px 0 40px rgba(0,0,0,0.6)',
     },
     contentArea: {
         flex: 1,
         padding: '32px',
-        background:
-            'radial-gradient(circle at 20% 10%, rgba(99,102,241,0.08), transparent 40%), radial-gradient(circle at 80% 90%, rgba(34,211,238,0.08), transparent 40%)',
+        backgroundColor: '#f8fafc',
         overflowY: 'auto',
     },
 
     /* ================= CARDS ================= */
     card: {
         padding: '20px',
-        borderRadius: '16px',
-        background:
-            'linear-gradient(180deg, rgba(2,6,23,0.85), rgba(2,6,23,0.6))',
-        border: '1px solid rgba(99,102,241,0.25)',
-        boxShadow:
-            '0 0 0 1px rgba(99,102,241,0.15), 0 20px 60px rgba(0,0,0,0.8)',
-        backdropFilter: 'blur(12px)',
-        marginBottom: '12px',
+        backgroundColor: '#ffffff',
+        borderRadius: '12px',
+        border: '1px solid #e5e7eb',
+        boxShadow: '0 1px 2px rgba(0,0,0,0.04)',
+        marginBottom: '8px',
     },
 
     title: {
-        fontSize: '1.6rem',
-        fontWeight: '900',
-        letterSpacing: '1px',
-        color: '#67e8f9',
-        marginBottom: '24px',
-        textShadow: '0 0 12px rgba(34,211,238,0.8)',
+        fontSize: '1.4rem',
+        fontWeight: '700',
+        color: '#0f172a',
+        marginBottom: '20px',
     },
 
     /* ================= NOTES ================= */
     notesTextarea: {
         width: '100%',
         minHeight: '420px',
-        padding: '18px',
+        padding: '16px',
         fontSize: '0.95rem',
-        background: '#020617',
-        color: '#e5e7eb',
-        border: '1px solid rgba(34,211,238,0.35)',
-        borderRadius: '16px',
+        border: '1px solid #cbd5f5',
+        borderRadius: '10px',
         resize: 'vertical',
+        fontFamily: 'inherit',
+        boxSizing: 'border-box',
         outline: 'none',
-        boxShadow:
-            'inset 0 0 30px rgba(34,211,238,0.15), 0 0 25px rgba(99,102,241,0.2)',
+        backgroundColor: '#ffffff',
     },
 
-    /* ================= INFO ================= */
+    /* ================= USER INFO ================= */
     userInfoBlock: {
-        marginBottom: '10px',
+        marginBottom: '8px',
     },
     userInfoTitle: {
         fontSize: '0.95rem',
-        fontWeight: '800',
-        letterSpacing: '1px',
-        color: '#a5b4fc',
-        marginBottom: '12px',
-        borderBottom: '1px dashed rgba(99,102,241,0.35)',
+        fontWeight: '600',
+        color: '#0f172a',
+        marginBottom: '10px',
         paddingBottom: '6px',
+        borderBottom: '1px solid #e5e7eb',
     },
     infoRow: {
         display: 'flex',
         justifyContent: 'space-between',
-        padding: '8px 0',
-        fontSize: '0.8rem',
-        borderBottom: '1px dashed rgba(255,255,255,0.05)',
+        alignItems: 'center',
+        padding: '6px 0',
+        fontSize: '0.85rem',
     },
     infoKey: {
-        color: '#94a3b8',
+        color: '#64748b',
     },
     infoVal: {
-        fontWeight: '800',
-        color: '#e5e7eb',
+        fontWeight: '600',
+        color: '#0f172a',
     },
 
     subscriptionBadge: {
-        padding: '4px 12px',
+        padding: '4px 10px',
         borderRadius: '9999px',
         fontSize: '0.7rem',
-        fontWeight: '900',
-        background: 'linear-gradient(90deg, #22d3ee, #6366f1)',
-        color: '#020617',
-        boxShadow: '0 0 15px rgba(99,102,241,0.9)',
+        fontWeight: '600',
+        backgroundColor: '#eef2ff',
+        color: '#3730a3',
     },
 
     phoneNumberDisplay: {
-        fontWeight: '800',
-        color: '#22d3ee',
-        backgroundColor: 'rgba(34,211,238,0.1)',
-        padding: '4px 10px',
-        borderRadius: '8px',
+        fontWeight: '600',
+        color: '#3730a3',
+        backgroundColor: '#eef2ff',
+        padding: '4px 8px',
+        borderRadius: '6px',
         fontFamily: 'monospace',
-        boxShadow: '0 0 15px rgba(34,211,238,0.6)',
     },
 
     /* ================= ADDRESS ================= */
     addressItem: {
         padding: '12px',
-        margin: '8px 0',
-        borderRadius: '12px',
-        background: '#020617',
-        border: '1px solid rgba(99,102,241,0.25)',
+        margin: '6px 0',
+        border: '1px solid #e5e7eb',
+        borderRadius: '8px',
         cursor: 'pointer',
-        fontSize: '0.8rem',
-        transition: 'all 0.25s ease',
+        fontSize: '0.85rem',
+        backgroundColor: '#ffffff',
+        transition: 'background-color 0.15s ease',
     },
     addressSelected: {
-        background:
-            'linear-gradient(90deg, rgba(99,102,241,0.35), rgba(34,211,238,0.35))',
-        borderColor: '#22d3ee',
-        boxShadow: '0 0 25px rgba(34,211,238,0.8)',
-        fontWeight: '900',
+        backgroundColor: '#eef2ff',
+        borderColor: '#6366f1',
+        fontWeight: '600',
     },
 
     /* ================= ORDERS ================= */
     orderCard: {
-        background: 'linear-gradient(180deg, #3f0a0a, #1f0303)',
-        border: '1px solid #ef4444',
-        borderRadius: '14px',
-        padding: '14px',
-        marginBottom: '12px',
-        boxShadow: '0 0 25px rgba(239,68,68,0.6)',
+        border: '1px solid #fee2e2',
+        backgroundColor: '#fff5f5',
+        borderRadius: '10px',
+        padding: '12px',
+        marginBottom: '10px',
     },
     orderHeader: {
         display: 'flex',
         justifyContent: 'space-between',
         fontSize: '0.8rem',
-        fontWeight: '900',
-        color: '#fecaca',
+        fontWeight: '600',
+        color: '#991b1b',
         marginBottom: '6px',
     },
     cancelBtn: {
         width: '100%',
-        background: 'linear-gradient(90deg, #ef4444, #dc2626)',
-        color: '#020617',
+        backgroundColor: '#ef4444',
+        color: '#ffffff',
         border: 'none',
         padding: '8px',
-        borderRadius: '10px',
-        fontSize: '0.7rem',
-        fontWeight: '900',
+        borderRadius: '8px',
+        fontSize: '0.75rem',
+        fontWeight: '600',
         cursor: 'pointer',
         marginTop: '8px',
-        boxShadow: '0 0 20px rgba(239,68,68,0.9)',
     },
 
     /* ================= ACTION ================= */
     saveButton: {
-        padding: '14px 32px',
-        borderRadius: '18px',
+        padding: '12px 24px',
+        borderRadius: '10px',
         border: 'none',
-        fontWeight: '900',
-        fontSize: '0.85rem',
+        fontWeight: '600',
+        fontSize: '0.9rem',
         cursor: 'pointer',
-        letterSpacing: '1px',
-        textTransform: 'uppercase',
-        background: 'linear-gradient(90deg, #22d3ee, #6366f1)',
-        color: '#020617',
-        boxShadow: '0 0 35px rgba(99,102,241,1)',
+        backgroundColor: '#4f46e5',
+        color: '#ffffff',
     },
     message: {
         marginRight: '15px',
-        fontSize: '0.8rem',
-        fontWeight: '900',
+        fontSize: '0.85rem',
+        fontWeight: '600',
     },
     emptyState: {
         textAlign: 'center',
-        color: '#94a3b8',
-        fontSize: '0.8rem',
-        padding: '20px 0',
+        color: '#64748b',
+        fontSize: '0.85rem',
+        padding: '16px 0',
         fontStyle: 'italic',
     }
 };
@@ -582,6 +555,7 @@ const styles = {
         </div>
     );
 }
+
 
 
 
