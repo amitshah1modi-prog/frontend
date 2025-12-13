@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 
-// --- Icon Components for a professional look (using simple SVG for no external library) ---
+// --- Icon Components (SVGs remain unchanged) ---
 const PhoneIcon = (props) => (
     <svg {...props} width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
         <path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path>
@@ -118,11 +118,11 @@ const styles = {
         maxWidth: '1300px', margin: '0 auto', padding: '32px 24px', flex: 1, width: '100%',
         display: 'flex', flexDirection: 'column', gap: '32px',
     },
-    // **Service Card Grid - FIXED GAP**
+    // **Service Card Grid - FIXED WITH FLEXBOX**
     serviceGrid: {
-        display: 'grid', 
-        gridTemplateColumns: 'repeat(auto-fit, minmax(220px, 1fr))', 
-        gap: '24px', // Increased gap for better spacing
+        display: 'flex',
+        flexWrap: 'wrap', // Allows items to wrap to the next line
+        margin: '-12px', // Counteracts the margin applied to children
         marginBottom: '100px', 
         width: '100%',
     },
@@ -170,7 +170,7 @@ const styles = {
         display: 'flex',
         flexDirection: 'column',
     },
-    // **SUBCATEGORY GRID FIX**
+    // **SUBCATEGORY GRID**
     subcategoryGrid: {
         display: 'grid',
         gridTemplateColumns: 'repeat(2, 1fr)', 
@@ -211,8 +211,16 @@ const ServiceCard = ({ service, onClick, isSelected, hasSubcategories }) => {
     };
 
     const cardStyle = {
+        // --- KEY FIX FOR SPACING ---
+        flex: '0 0 calc(33.333% - 24px)', // Take up 1/3 of the width minus the total margin
+        margin: '12px', // 12px margin on all sides, resulting in 24px gap between cards
+        
         backgroundColor: isSelected ? '#eef2ff' : 'white',
-        padding: '30px', borderRadius: '12px', height: '100%', display: 'flex', flexDirection: 'column',
+        padding: '30px', 
+        borderRadius: '12px', 
+        height: '100%', 
+        display: 'flex', 
+        flexDirection: 'column',
         cursor: 'pointer',
         transform: isHovered || isSelected ? 'translateY(-6px)' : 'translateY(0)', 
         border: isSelected ? '3px solid #4f46e5' : isHovered ? '1px solid #a5b4fc' : '1px solid #e5e7eb',
@@ -246,7 +254,7 @@ const ServiceCard = ({ service, onClick, isSelected, hasSubcategories }) => {
     );
 };
 
-// --- CORRECTED SUBCATEGORY CARD ---
+// --- CORRECTED SUBCATEGORY CARD (Text truncation fix maintained) ---
 const SubcategoryCard = ({ subcategory, isSelected, onClick }) => {
     const [isHovered, setIsHovered] = useState(false);
     
@@ -291,7 +299,7 @@ const SubcategoryCard = ({ subcategory, isSelected, onClick }) => {
     );
 };
 
-// --- CORRECTED SUBCATEGORY MODAL ---
+// --- SUBCATEGORY MODAL (Layout structure confirmed stable) ---
 const SubcategoryModal = ({ service, subcategories, initialSelection, onSave, onClose }) => {
     const [tempSelection, setTempSelection] = useState(initialSelection || []);
 
@@ -559,7 +567,7 @@ export default function UserServicesPage() {
                     Click on the card to select a service. Services that require specific tasks (🔗) will prompt a sub-service selection window.
                 </p>
 
-                {/* SERVICE GRID */}
+                {/* SERVICE GRID (NOW FLEXBOX FOR STABILITY) */}
                 <div style={styles.serviceGrid}>
                     {SERVICES.map((service) => {
                         const hasSubcategories = ['Cleaning', 'Plumber', 'Carpenter'].includes(service.name);
