@@ -194,62 +194,57 @@ export default function UserDashboardPage() {
         }
     };
     // --------------------------------------------------------
-
- const styles = {
+const styles = {
     container: {
         display: 'flex',
         flexDirection: 'column',
         height: '100vh',
         fontFamily: '"Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
-        backgroundColor: '#f1f5f9',
-        color: '#020617',
+        backgroundColor: '#f9fafb',
+        color: '#0f172a',
     },
 
-    /* ================= COMMAND HEADER ================= */
+    /* ================= HEADER ================= */
     header: {
         height: '64px',
-        backgroundColor: '#020617',
-        color: '#e5e7eb',
+        backgroundColor: '#ffffff',
+        borderBottom: '1px solid #e5e7eb',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
         padding: '0 32px',
-        borderBottom: '1px solid #1e293b',
-        zIndex: 20,
+        zIndex: 10,
     },
     brand: {
-        fontSize: '1.05rem',
+        fontSize: '1rem',
         fontWeight: '700',
-        letterSpacing: '0.04em',
-        textTransform: 'uppercase',
+        letterSpacing: '-0.01em',
         display: 'flex',
         alignItems: 'center',
         gap: '10px',
-        color: '#e5e7eb',
+        color: '#0f172a',
     },
     headerRight: {
         display: 'flex',
         alignItems: 'center',
-        gap: '22px',
+        gap: '24px',
     },
     clock: {
         fontFamily: 'monospace',
-        color: '#94a3b8',
         fontSize: '0.8rem',
-        letterSpacing: '0.1em',
+        color: '#64748b',
     },
     avatar: {
-        width: '34px',
-        height: '34px',
-        borderRadius: '6px',
-        backgroundColor: '#0f172a',
+        width: '36px',
+        height: '36px',
+        borderRadius: '999px',
+        backgroundColor: '#2563eb',
+        color: '#ffffff',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
-        fontSize: '0.75rem',
         fontWeight: '700',
-        color: '#e5e7eb',
-        border: '1px solid #1e293b',
+        fontSize: '0.8rem',
     },
 
     /* ================= LAYOUT ================= */
@@ -259,142 +254,125 @@ export default function UserDashboardPage() {
         overflow: 'hidden',
     },
     sidebar: {
-        width: '360px',
-        backgroundColor: '#020617',
-        color: '#e5e7eb',
-        borderRight: '1px solid #1e293b',
-        padding: '24px',
+        width: '340px',
+        backgroundColor: '#ffffff',
+        borderRight: '1px solid #e5e7eb',
+        padding: '28px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '18px',
+        gap: '24px',
         overflowY: 'auto',
     },
     contentArea: {
         flex: 1,
-        padding: '32px 36px',
-        backgroundColor: '#f8fafc',
+        padding: '36px',
+        backgroundColor: '#f9fafb',
         overflowY: 'auto',
     },
 
-    /* ================= PANELS ================= */
+    /* ================= CARDS ================= */
     card: {
-        padding: '18px',
-        backgroundColor: '#020617',
+        backgroundColor: '#ffffff',
         borderRadius: '12px',
-        border: '1px solid #1e293b',
-        boxShadow: 'inset 0 0 0 1px rgba(255,255,255,0.02)',
+        padding: '20px',
+        border: '1px solid #e5e7eb',
     },
 
     title: {
-        fontSize: '1.3rem',
+        fontSize: '1.4rem',
         fontWeight: '700',
-        color: '#020617',
-        marginBottom: '18px',
-        letterSpacing: '-0.01em',
+        marginBottom: '20px',
+        letterSpacing: '-0.02em',
     },
 
-    /* ================= NOTES WORKSPACE ================= */
+    /* ================= NOTES ================= */
     notesTextarea: {
         width: '100%',
         minHeight: '460px',
         padding: '20px',
         fontSize: '0.95rem',
         lineHeight: '1.6',
-        border: '1px solid #cbd5e1',
-        borderRadius: '12px',
-        resize: 'vertical',
+        borderRadius: '10px',
+        border: '1px solid #d1d5db',
+        outline: 'none',
         fontFamily: 'inherit',
         backgroundColor: '#ffffff',
-        boxSizing: 'border-box',
-        outline: 'none',
     },
 
     /* ================= INFO ================= */
-    userInfoBlock: {},
     userInfoTitle: {
         fontSize: '0.75rem',
         fontWeight: '700',
-        letterSpacing: '0.12em',
+        color: '#64748b',
+        letterSpacing: '0.08em',
         textTransform: 'uppercase',
-        color: '#94a3b8',
-        marginBottom: '10px',
-        borderBottom: '1px solid #1e293b',
-        paddingBottom: '6px',
+        marginBottom: '12px',
     },
     infoRow: {
         display: 'flex',
         justifyContent: 'space-between',
-        padding: '6px 0',
-        fontSize: '0.8rem',
+        padding: '8px 0',
+        fontSize: '0.85rem',
     },
     infoKey: {
-        color: '#94a3b8',
+        color: '#64748b',
     },
     infoVal: {
         fontWeight: '600',
-        color: '#e5e7eb',
+        color: '#0f172a',
     },
-
     subscriptionBadge: {
+        backgroundColor: '#e0f2fe',
+        color: '#0369a1',
         padding: '4px 10px',
-        borderRadius: '6px',
-        fontSize: '0.65rem',
+        borderRadius: '999px',
+        fontSize: '0.7rem',
         fontWeight: '700',
-        backgroundColor: '#0f172a',
-        color: '#e5e7eb',
-        border: '1px solid #1e293b',
     },
 
     phoneNumberDisplay: {
         fontFamily: 'monospace',
         fontWeight: '600',
-        fontSize: '0.8rem',
-        backgroundColor: '#0f172a',
+        fontSize: '0.85rem',
+        backgroundColor: '#f1f5f9',
         padding: '4px 8px',
         borderRadius: '6px',
-        border: '1px solid #1e293b',
-        color: '#e5e7eb',
     },
 
     /* ================= ADDRESS ================= */
     addressItem: {
         padding: '12px',
-        margin: '6px 0',
-        border: '1px solid #1e293b',
         borderRadius: '8px',
+        border: '1px solid #e5e7eb',
         cursor: 'pointer',
-        fontSize: '0.8rem',
-        backgroundColor: '#020617',
-        color: '#e5e7eb',
+        fontSize: '0.85rem',
+        backgroundColor: '#ffffff',
     },
     addressSelected: {
-        backgroundColor: '#0f172a',
-        borderColor: '#6366f1',
-        boxShadow: 'inset 0 0 0 1px #6366f1',
+        borderColor: '#2563eb',
+        backgroundColor: '#eff6ff',
         fontWeight: '600',
     },
 
     /* ================= ORDERS ================= */
     orderCard: {
-        border: '1px solid #7f1d1d',
-        backgroundColor: '#020617',
+        border: '1px solid #fecaca',
+        backgroundColor: '#fff5f5',
         borderRadius: '10px',
-        padding: '12px',
-        marginBottom: '10px',
+        padding: '14px',
+        marginBottom: '12px',
     },
     orderHeader: {
         display: 'flex',
         justifyContent: 'space-between',
         fontSize: '0.75rem',
         fontWeight: '700',
-        letterSpacing: '0.08em',
-        color: '#fca5a5',
+        color: '#991b1b',
         marginBottom: '6px',
-        textTransform: 'uppercase',
     },
     cancelBtn: {
         width: '100%',
-        backgroundColor: '#7f1d1d',
+        backgroundColor: '#dc2626',
         color: '#ffffff',
         border: 'none',
         padding: '8px',
@@ -410,26 +388,26 @@ export default function UserDashboardPage() {
         padding: '12px 28px',
         borderRadius: '10px',
         border: 'none',
-        fontWeight: '700',
+        backgroundColor: '#2563eb',
+        color: '#ffffff',
         fontSize: '0.9rem',
-        backgroundColor: '#020617',
-        color: '#e5e7eb',
-        border: '1px solid #1e293b',
+        fontWeight: '700',
         cursor: 'pointer',
     },
     message: {
-        marginRight: '15px',
-        fontSize: '0.8rem',
+        marginRight: '16px',
+        fontSize: '0.85rem',
         fontWeight: '600',
     },
     emptyState: {
         textAlign: 'center',
-        color: '#94a3b8',
-        fontSize: '0.8rem',
-        padding: '14px 0',
+        color: '#64748b',
+        fontSize: '0.85rem',
+        padding: '16px 0',
         fontStyle: 'italic',
-    }
+    },
 };
+
 
     // --------------------------------------------------------
 
@@ -567,6 +545,7 @@ export default function UserDashboardPage() {
         </div>
     );
 }
+
 
 
 
