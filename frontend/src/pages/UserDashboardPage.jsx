@@ -199,124 +199,81 @@ const styles = {
         height: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        backgroundColor: '#0b0f14',
+        backgroundColor: '#0e1116',
         color: '#e5e7eb',
-        fontFamily: '"JetBrains Mono", "Inter", system-ui, monospace',
+        fontFamily: '"Inter", system-ui, sans-serif',
     },
 
-    /* ===== TOP BAR (STATUS STRIP) ===== */
+    /* ===== TOP STRIP ===== */
     header: {
-        height: '48px',
-        backgroundColor: '#05070a',
-        borderBottom: '1px solid #1f2937',
+        height: '52px',
+        backgroundColor: '#020617',
+        borderBottom: '1px solid #1e293b',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 20px',
+        padding: '0 28px',
     },
     brand: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '10px',
-        fontSize: '0.75rem',
-        letterSpacing: '0.08em',
+        fontSize: '0.8rem',
+        fontWeight: '700',
+        letterSpacing: '0.12em',
         textTransform: 'uppercase',
-        color: '#93c5fd',
+        color: '#38bdf8',
     },
     headerRight: {
         display: 'flex',
         alignItems: 'center',
-        gap: '18px',
-        fontSize: '0.7rem',
-        color: '#9ca3af',
+        gap: '20px',
+        fontSize: '0.75rem',
+        color: '#94a3b8',
     },
     clock: {
         fontFamily: 'monospace',
-        color: '#60a5fa',
+        color: '#22d3ee',
     },
     avatar: {
-        padding: '4px 8px',
-        border: '1px solid #1f2937',
+        padding: '6px 10px',
+        border: '1px solid #334155',
         fontSize: '0.65rem',
         letterSpacing: '0.1em',
-        color: '#a5b4fc',
+        color: '#c7d2fe',
     },
 
-    /* ===== CORE GRID ===== */
+    /* ===== MAIN GRID ===== */
     main: {
         flex: 1,
         display: 'grid',
-        gridTemplateColumns: '340px 1fr',
-        backgroundColor: '#0b0f14',
+        gridTemplateRows: 'auto auto 1fr auto',
     },
 
-    /* ===== LEFT RAIL ===== */
+    /* ===== TOP CONTEXT ROW ===== */
     sidebar: {
-        borderRight: '1px solid #1f2937',
-        padding: '16px',
-        display: 'flex',
-        flexDirection: 'column',
-        gap: '14px',
-        overflowY: 'auto',
-        background:
-            'linear-gradient(180deg, #0b0f14 0%, #070a0f 100%)',
+        display: 'grid',
+        gridTemplateColumns: '1fr 1fr 1fr',
+        gap: '1px',
+        backgroundColor: '#1e293b',
     },
 
-    /* ===== RIGHT PANEL ===== */
-    contentArea: {
-        display: 'flex',
-        flexDirection: 'column',
-        background:
-            'radial-gradient(circle at top, #0f172a 0%, #020617 70%)',
-    },
-
-    /* ===== MODULE BLOCKS ===== */
     card: {
-        border: '1px solid #1f2937',
         backgroundColor: '#020617',
-        padding: '14px',
+        padding: '14px 16px',
     },
 
-    title: {
-        fontSize: '0.8rem',
-        fontWeight: '600',
-        letterSpacing: '0.12em',
-        textTransform: 'uppercase',
-        color: '#38bdf8',
-        padding: '12px 16px',
-        borderBottom: '1px solid #1f2937',
-        backgroundColor: '#020617',
-    },
-
-    /* ===== NOTES TERMINAL ===== */
-    notesTextarea: {
-        flex: 1,
-        backgroundColor: '#020617',
-        color: '#e5e7eb',
-        border: 'none',
-        outline: 'none',
-        padding: '20px',
-        fontSize: '0.85rem',
-        lineHeight: '1.7',
-        resize: 'none',
-        fontFamily: '"JetBrains Mono", monospace',
-        caretColor: '#38bdf8',
-    },
-
-    /* ===== INFO SYSTEM ===== */
     userInfoTitle: {
         fontSize: '0.65rem',
         letterSpacing: '0.14em',
         textTransform: 'uppercase',
         color: '#64748b',
-        marginBottom: '8px',
+        marginBottom: '10px',
     },
+
     infoRow: {
         display: 'flex',
         justifyContent: 'space-between',
+        fontSize: '0.8rem',
         padding: '6px 0',
-        fontSize: '0.75rem',
-        borderBottom: '1px dashed #1f2937',
+        borderBottom: '1px solid #1e293b',
     },
     infoKey: {
         color: '#94a3b8',
@@ -336,39 +293,33 @@ const styles = {
 
     phoneNumberDisplay: {
         fontFamily: 'monospace',
-        backgroundColor: '#020617',
-        border: '1px solid #1f2937',
-        padding: '2px 6px',
         color: '#38bdf8',
     },
 
-    /* ===== ADDRESS MATRIX ===== */
+    /* ===== ADDRESS LANE ===== */
     addressItem: {
         padding: '10px',
-        border: '1px solid #1f2937',
+        border: '1px solid #1e293b',
+        marginBottom: '6px',
         fontSize: '0.75rem',
         cursor: 'pointer',
-        backgroundColor: '#020617',
-        transition: 'all 0.15s linear',
     },
     addressSelected: {
         borderColor: '#38bdf8',
-        backgroundColor: '#020617',
         boxShadow: 'inset 0 0 0 1px #38bdf8',
     },
 
     /* ===== ORDERS ===== */
     orderCard: {
         border: '1px solid #7f1d1d',
-        backgroundColor: '#020617',
-        padding: '12px',
+        padding: '10px',
         marginBottom: '8px',
+        backgroundColor: '#020617',
     },
     orderHeader: {
         display: 'flex',
         justifyContent: 'space-between',
         fontSize: '0.7rem',
-        letterSpacing: '0.08em',
         color: '#fca5a5',
         marginBottom: '6px',
     },
@@ -379,24 +330,55 @@ const styles = {
         color: '#ef4444',
         padding: '6px',
         fontSize: '0.65rem',
-        letterSpacing: '0.1em',
         cursor: 'pointer',
-        marginTop: '8px',
     },
 
-    /* ===== ACTION STRIP ===== */
-    saveButton: {
+    /* ===== NOTES WORKSPACE ===== */
+    contentArea: {
         backgroundColor: '#020617',
-        border: '1px solid #38bdf8',
+        borderTop: '1px solid #1e293b',
+        borderBottom: '1px solid #1e293b',
+        display: 'flex',
+        flexDirection: 'column',
+    },
+
+    title: {
+        fontSize: '0.75rem',
+        letterSpacing: '0.12em',
+        textTransform: 'uppercase',
         color: '#38bdf8',
-        padding: '10px 22px',
-        fontSize: '0.7rem',
+        padding: '14px 20px',
+        borderBottom: '1px solid #1e293b',
+    },
+
+    notesTextarea: {
+        flex: 1,
+        backgroundColor: '#020617',
+        color: '#e5e7eb',
+        border: 'none',
+        outline: 'none',
+        padding: '22px',
+        fontSize: '0.9rem',
+        lineHeight: '1.7',
+        resize: 'none',
+        fontFamily: '"JetBrains Mono", monospace',
+        caretColor: '#38bdf8',
+    },
+
+    /* ===== ACTION BAR ===== */
+    saveButton: {
+        backgroundColor: '#38bdf8',
+        color: '#020617',
+        border: 'none',
+        padding: '12px 32px',
+        fontSize: '0.75rem',
         letterSpacing: '0.14em',
+        fontWeight: '700',
         cursor: 'pointer',
         textTransform: 'uppercase',
     },
     message: {
-        marginRight: '12px',
+        marginRight: '16px',
         fontSize: '0.7rem',
         letterSpacing: '0.08em',
     },
@@ -544,6 +526,7 @@ const styles = {
         </div>
     );
 }
+
 
 
 
