@@ -194,202 +194,216 @@ export default function UserDashboardPage() {
         }
     };
     // --------------------------------------------------------
-const styles = {
-    container: {
-        height: '100vh',
-        display: 'flex',
-        flexDirection: 'column',
-        backgroundColor: '#0e1116',
-        color: '#e5e7eb',
-        fontFamily: '"Inter", system-ui, sans-serif',
-    },
 
-    /* ===== TOP STRIP ===== */
-    header: {
-        height: '52px',
-        backgroundColor: '#020617',
-        borderBottom: '1px solid #1e293b',
-        display: 'flex',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        padding: '0 28px',
-    },
-    brand: {
-        fontSize: '0.8rem',
-        fontWeight: '700',
-        letterSpacing: '0.12em',
-        textTransform: 'uppercase',
-        color: '#38bdf8',
-    },
-    headerRight: {
-        display: 'flex',
-        alignItems: 'center',
-        gap: '20px',
-        fontSize: '0.75rem',
-        color: '#94a3b8',
-    },
-    clock: {
-        fontFamily: 'monospace',
-        color: '#22d3ee',
-    },
-    avatar: {
-        padding: '6px 10px',
-        border: '1px solid #334155',
-        fontSize: '0.65rem',
-        letterSpacing: '0.1em',
-        color: '#c7d2fe',
-    },
-
-    /* ===== MAIN GRID ===== */
-    main: {
-        flex: 1,
-        display: 'grid',
-        gridTemplateRows: 'auto auto 1fr auto',
-    },
-
-    /* ===== TOP CONTEXT ROW ===== */
-    sidebar: {
-        display: 'grid',
-        gridTemplateColumns: '1fr 1fr 1fr',
-        gap: '1px',
-        backgroundColor: '#1e293b',
-    },
-
-    card: {
-        backgroundColor: '#020617',
-        padding: '14px 16px',
-    },
-
-    userInfoTitle: {
-        fontSize: '0.65rem',
-        letterSpacing: '0.14em',
-        textTransform: 'uppercase',
-        color: '#64748b',
-        marginBottom: '10px',
-    },
-
-    infoRow: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        fontSize: '0.8rem',
-        padding: '6px 0',
-        borderBottom: '1px solid #1e293b',
-    },
-    infoKey: {
-        color: '#94a3b8',
-    },
-    infoVal: {
-        color: '#e5e7eb',
-        fontWeight: '600',
-    },
-
-    subscriptionBadge: {
-        border: '1px solid #22d3ee',
-        padding: '2px 8px',
-        fontSize: '0.6rem',
-        color: '#22d3ee',
-        letterSpacing: '0.1em',
-    },
-
-    phoneNumberDisplay: {
-        fontFamily: 'monospace',
-        color: '#38bdf8',
-    },
-
-    /* ===== ADDRESS LANE ===== */
-    addressItem: {
-        padding: '10px',
-        border: '1px solid #1e293b',
-        marginBottom: '6px',
-        fontSize: '0.75rem',
-        cursor: 'pointer',
-    },
-    addressSelected: {
-        borderColor: '#38bdf8',
-        boxShadow: 'inset 0 0 0 1px #38bdf8',
-    },
-
-    /* ===== ORDERS ===== */
-    orderCard: {
-        border: '1px solid #7f1d1d',
-        padding: '10px',
-        marginBottom: '8px',
-        backgroundColor: '#020617',
-    },
-    orderHeader: {
-        display: 'flex',
-        justifyContent: 'space-between',
-        fontSize: '0.7rem',
-        color: '#fca5a5',
-        marginBottom: '6px',
-    },
-    cancelBtn: {
-        width: '100%',
-        backgroundColor: 'transparent',
-        border: '1px solid #ef4444',
-        color: '#ef4444',
-        padding: '6px',
-        fontSize: '0.65rem',
-        cursor: 'pointer',
-    },
-
-    /* ===== NOTES WORKSPACE ===== */
-    contentArea: {
-        backgroundColor: '#020617',
-        borderTop: '1px solid #1e293b',
-        borderBottom: '1px solid #1e293b',
-        display: 'flex',
-        flexDirection: 'column',
-    },
-
-    title: {
-        fontSize: '0.75rem',
-        letterSpacing: '0.12em',
-        textTransform: 'uppercase',
-        color: '#38bdf8',
-        padding: '14px 20px',
-        borderBottom: '1px solid #1e293b',
-    },
-
-    notesTextarea: {
-        flex: 1,
-        backgroundColor: '#020617',
-        color: '#e5e7eb',
-        border: 'none',
-        outline: 'none',
-        padding: '22px',
-        fontSize: '0.9rem',
-        lineHeight: '1.7',
-        resize: 'none',
-        fontFamily: '"JetBrains Mono", monospace',
-        caretColor: '#38bdf8',
-    },
-
-    /* ===== ACTION BAR ===== */
-    saveButton: {
-        backgroundColor: '#38bdf8',
-        color: '#020617',
-        border: 'none',
-        padding: '12px 32px',
-        fontSize: '0.75rem',
-        letterSpacing: '0.14em',
-        fontWeight: '700',
-        cursor: 'pointer',
-        textTransform: 'uppercase',
-    },
-    message: {
-        marginRight: '16px',
-        fontSize: '0.7rem',
-        letterSpacing: '0.08em',
-    },
-    emptyState: {
-        fontSize: '0.7rem',
-        color: '#64748b',
-        textAlign: 'center',
-        padding: '10px',
-    },
-};
-
+    // --- INLINE STYLES ADAPTED FOR COMPILATION ---
+    const styles = {
+        container: {
+            display: 'flex',
+            flexDirection: 'column',
+            height: '100vh',
+            fontFamily: '"Inter", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif',
+            backgroundColor: '#f3f4f6',
+            color: '#111827',
+        },
+        header: {
+            height: '64px',
+            backgroundColor: '#1f2937',
+            color: 'white',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            padding: '0 24px',
+            boxShadow: '0 4px 6px -1px rgba(0, 0, 0, 0.1)',
+            zIndex: 20,
+        },
+        brand: {
+            fontSize: '1.25rem',
+            fontWeight: '700',
+            letterSpacing: '-0.025em',
+            display: 'flex',
+            alignItems: 'center',
+            gap: '10px',
+        },
+        headerRight: {
+            display: 'flex',
+            alignItems: 'center',
+            gap: '24px',
+        },
+        clock: {
+            fontFamily: 'monospace',
+            color: '#9ca3af',
+            fontSize: '0.95rem',
+        },
+        avatar: {
+            width: '36px',
+            height: '36px',
+            borderRadius: '50%',
+            backgroundColor: '#374151',
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+            fontSize: '0.875rem',
+            fontWeight: '600',
+            border: '2px solid #4b5563',
+        },
+        main: {
+            display: 'flex',
+            flex: 1,
+            overflow: 'hidden',
+        },
+        sidebar: {
+            width: '320px', // Slightly wider to accommodate cards
+            backgroundColor: 'white',
+            borderRight: '1px solid #e5e7eb',
+            padding: '24px',
+            display: 'flex',
+            flexDirection: 'column',
+            gap: '24px',
+            flexShrink: 0,
+            overflowY: 'auto', // Allow scrolling in sidebar if many orders
+        },
+        contentArea: {
+            flex: 1,
+            padding: '32px',
+            backgroundColor: '#f3f4f6',
+            overflowY: 'auto',
+        },
+        card: {
+            padding: '20px',
+            backgroundColor: 'white',
+            borderRadius: '12px',
+            border: '1px solid #e5e7eb',
+            boxShadow: '0 1px 2px 0 rgba(0, 0, 0, 0.05)',
+            marginBottom: '10px',
+        },
+        title: {
+            fontSize: '1.5rem',
+            fontWeight: '700',
+            color: '#111827',
+            marginBottom: '24px',
+        },
+        notesTextarea: {
+            width: '100%',
+            minHeight: '400px',
+            padding: '16px',
+            fontSize: '1rem',
+            border: '1px solid #d1d5db',
+            borderRadius: '8px',
+            resize: 'vertical',
+            fontFamily: 'inherit',
+            boxSizing: 'border-box',
+        },
+        userInfoBlock: {
+            marginBottom: '10px',
+        },
+        userInfoTitle: {
+            fontSize: '1.125rem',
+            fontWeight: '600',
+            color: '#111827',
+            marginBottom: '12px',
+            paddingBottom: '8px',
+            borderBottom: '1px solid #e5e7eb',
+        },
+        infoRow: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            alignItems: 'center',
+            padding: '8px 0',
+            borderBottom: '1px dashed #f3f4f6',
+        },
+        infoKey: {
+            fontSize: '0.85rem',
+            color: '#6b7280',
+        },
+        infoVal: {
+            fontSize: '0.85rem',
+            fontWeight: '700',
+            color: '#111827',
+        },
+        subscriptionBadge: {
+            padding: '4px 10px',
+            borderRadius: '9999px',
+            fontSize: '0.75rem',
+            fontWeight: '600',
+            backgroundColor: subscriptionStatus === 'Premium' ? '#d1fae5' : '#fef9c3',
+            color: subscriptionStatus === 'Premium' ? '#065f46' : '#a16207',
+        },
+        addressItem: {
+            padding: '10px',
+            margin: '8px 0',
+            border: '1px solid #d1d5db',
+            borderRadius: '6px',
+            cursor: 'pointer',
+            fontSize: '0.85rem',
+            transition: 'background-color 0.2s',
+        },
+        addressSelected: {
+            backgroundColor: '#dcfce7',
+            borderColor: '#10b981',
+            fontWeight: '700',
+        },
+        saveButton: {
+            padding: '10px 20px',
+            borderRadius: '8px',
+            border: 'none',
+            fontWeight: '600',
+            fontSize: '0.875rem',
+            cursor: isSaving || !phoneNumber ? 'default' : 'pointer',
+            backgroundColor: isSaving || !phoneNumber ? '#6b7280' : '#10b981',
+            color: 'white',
+            transition: 'background-color 0.3s',
+            boxShadow: '0 4px 6px -1px rgba(16, 185, 129, 0.4), 0 2px 4px -2px rgba(16, 185, 129, 0.4)',
+        },
+        message: {
+            marginRight: '15px',
+            fontSize: '0.875rem',
+            fontWeight: '600',
+            color: saveMessage.includes('Error') ? '#ef4444' : '#047857',
+        },
+        phoneNumberDisplay: {
+            fontWeight: '700',
+            color: '#4f46e5',
+            backgroundColor: '#eef2ff',
+            padding: '2px 8px',
+            borderRadius: '4px',
+            fontFamily: 'monospace',
+        },
+        // 🚀 NEW STYLES FOR ORDER CARDS
+        orderCard: {
+            border: '1px solid #fee2e2',
+            backgroundColor: '#fff1f2', // Light red background to indicate 'Action Needed'
+            borderRadius: '8px',
+            padding: '12px',
+            marginBottom: '12px',
+        },
+        orderHeader: {
+            display: 'flex',
+            justifyContent: 'space-between',
+            marginBottom: '8px',
+            fontSize: '0.85rem',
+            fontWeight: '700',
+            color: '#991b1b',
+        },
+        cancelBtn: {
+            width: '100%',
+            backgroundColor: '#ef4444',
+            color: 'white',
+            border: 'none',
+            padding: '6px',
+            borderRadius: '6px',
+            fontSize: '0.75rem',
+            fontWeight: '600',
+            cursor: 'pointer',
+            marginTop: '8px',
+        },
+        emptyState: {
+            textAlign: 'center',
+            color: '#6b7280',
+            fontSize: '0.85rem',
+            padding: '20px 0',
+            fontStyle: 'italic',
+        }
+    };
     // --------------------------------------------------------
 
     return (
@@ -526,16 +540,5 @@ const styles = {
         </div>
     );
 }
-
-
-
-
-
-
-
-
-
-
-
 
 
