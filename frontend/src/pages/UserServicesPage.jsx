@@ -165,15 +165,32 @@ const styles = {
         maxHeight: '90vh', overflowY: 'auto', padding: '30px',
         boxShadow: '0 25px 50px -12px rgba(0, 0, 0, 0.4)',
     },
+    // **IMPROVED SUBCATEGORY STYLES**
     subcategoryGrid: {
-        display: 'grid', gridTemplateColumns: 'repeat(auto-fill, minmax(160px, 1fr))',
-        gap: '15px', marginTop: '20px', paddingBottom: '20px',
+        display: 'grid',
+        gridTemplateColumns: 'repeat(2, 1fr)', // Two-column layout for efficiency
+        gap: '20px',
+        marginTop: '20px',
+        padding: '10px 0',
+        borderTop: '1px solid #f3f4f6',
     },
     subcategoryCard: {
-        padding: '15px', borderRadius: '10px', border: '2px solid #e5e7eb', display: 'flex',
-        flexDirection: 'column', alignItems: 'center', textAlign: 'center', cursor: 'pointer',
+        padding: '15px',
+        borderRadius: '10px',
+        border: '2px solid #e5e7eb',
+        display: 'flex',
+        alignItems: 'center',
+        cursor: 'pointer',
         transition: 'all 0.2s',
     },
+    // **Modal Selected List**
+    selectedSubList: {
+        marginTop: '20px',
+        padding: '15px',
+        backgroundColor: '#f9fafb',
+        borderRadius: '8px',
+        border: '1px solid #e5e7eb',
+    }
 };
 
 // --- Custom Components with Updated Styles ---
@@ -184,14 +201,14 @@ const ServiceCard = ({ service, onClick, isSelected, hasSubcategories }) => {
     const iconContainerStyle = {
         display: 'inline-flex', alignItems: 'center', justifyContent: 'center', padding: '20px',
         borderRadius: '50%', backgroundColor: service.color, marginBottom: '16px',
-        boxShadow: `0 8px 15px -5px ${service.darkColor}60`, // More pronounced shadow
+        boxShadow: `0 8px 15px -5px ${service.darkColor}60`, 
     };
 
     const cardStyle = {
         backgroundColor: isSelected ? '#eef2ff' : 'white',
         padding: '30px', borderRadius: '12px', height: '100%', display: 'flex', flexDirection: 'column',
         cursor: 'pointer',
-        transform: isHovered || isSelected ? 'translateY(-6px)' : 'translateY(0)', // Lift on hover/select
+        transform: isHovered || isSelected ? 'translateY(-6px)' : 'translateY(0)', 
         border: isSelected ? '3px solid #4f46e5' : isHovered ? '1px solid #a5b4fc' : '1px solid #e5e7eb',
         boxShadow: (isHovered || isSelected) ? '0 15px 25px -5px rgba(0, 0, 0, 0.15)' : '0 5px 10px rgba(0, 0, 0, 0.05)',
         transition: 'all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1)',
@@ -223,29 +240,41 @@ const ServiceCard = ({ service, onClick, isSelected, hasSubcategories }) => {
     );
 };
 
+// --- IMPROVED SUBCATEGORY CARD ---
 const SubcategoryCard = ({ subcategory, isSelected, onClick }) => {
+    const [isHovered, setIsHovered] = useState(false);
+    
     const cardStyle = {
         ...styles.subcategoryCard,
-        backgroundColor: isSelected ? '#4f46e5' : '#f9fafb', // Lighter background when not selected
-        color: isSelected ? 'white' : '#1f2937',
-        borderColor: isSelected ? '#4f46e5' : '#d1d5db',
-        transform: isSelected ? 'scale(1.03)' : 'scale(1)',
-        boxShadow: isSelected ? '0 8px 15px -3px rgba(79, 70, 229, 0.4)' : '0 1px 3px rgba(0,0,0,0.05)',
+        backgroundColor: isSelected ? '#eef2ff' : 'white', // Light blue background for professional selection
+        color: isSelected ? '#1c2e4a' : '#1f2937',
+        borderColor: isSelected ? '#4f46e5' : isHovered ? '#d1d5db' : '#e5e7eb',
+        boxShadow: isSelected ? '0 2px 5px rgba(79, 70, 229, 0.2)' : 'none',
+        transform: isHovered ? 'scale(1.01)' : 'scale(1)',
+        padding: '18px 15px'
     };
 
     const iconStyle = {
-        fontSize: '1.8rem', marginBottom: '6px',
-        filter: isSelected ? 'grayscale(100%) brightness(10)' : 'none',
+        fontSize: '1.5rem', marginRight: '15px',
     };
 
     return (
-        <div style={cardStyle} onClick={() => onClick(subcategory.name)}>
+        <div 
+            style={cardStyle} 
+            onClick={() => onClick(subcategory.name)}
+            onMouseEnter={() => setIsHovered(true)} 
+            onMouseLeave={() => setIsHovered(false)}
+        >
             <span style={iconStyle}>{subcategory.icon}</span>
-            <span style={{ fontSize: '0.9rem', fontWeight: '700' }}>{subcategory.name}</span>
+            <span style={{ fontSize: '0.95rem', fontWeight: isSelected ? '700' : '600' }}>
+                {subcategory.name}
+            </span>
+            {isSelected && <span style={{ marginLeft: 'auto', color: '#4f46e5' }}>✓</span>}
         </div>
     );
 };
 
+// --- IMPROVED SUBCATEGORY MODAL ---
 const SubcategoryModal = ({ service, subcategories, initialSelection, onSave, onClose }) => {
     const [tempSelection, setTempSelection] = useState(initialSelection || []);
 
@@ -257,38 +286,72 @@ const SubcategoryModal = ({ service, subcategories, initialSelection, onSave, on
 
     const handleSave = () => {
         onSave(tempSelection);
-        // onClose is called by the parent after saving
     };
 
     return (
         <div style={styles.modalOverlay}>
             <div style={styles.modalContent}>
-                <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#1c2e4a', borderBottom: '2px solid #34d399', paddingBottom: '12px', marginBottom: '16px', display: 'flex', alignItems: 'center', gap: '10px' }}>
-                    <span style={{fontSize: '2.5rem'}}>{service.icon}</span> Select Sub-Services for {service.name}
-                </h2>
-                <p style={{ color: '#4b5563', marginBottom: '20px', fontSize: '1rem' }}>
-                    **Crucial Step:** Accurately select the specific tasks. This data is used for Service Provider assignment and pricing.
-                </p>
-                <div style={styles.subcategoryGrid}>
-                    {subcategories.map(sub => (
-                        <SubcategoryCard key={sub.name} subcategory={sub}
-                            isSelected={tempSelection.includes(sub.name)} onClick={toggleSelection} />
-                    ))}
+                <div style={{ backgroundColor: service.color, padding: '15px 20px', borderRadius: '10px 10px 0 0', margin: '-30px -30px 20px -30px', display: 'flex', alignItems: 'center' }}>
+                     <span style={{fontSize: '2.5rem', marginRight: '15px'}}>{service.icon}</span>
+                     <h2 style={{ fontSize: '1.75rem', fontWeight: '800', color: '#1c2e4a' }}>
+                        Define **{service.name}** Service Tasks
+                    </h2>
                 </div>
-                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', paddingTop: '20px', borderTop: '1px solid #e5e7eb' }}>
+               
+                <p style={{ color: '#4b5563', marginBottom: '15px', fontSize: '1rem', borderBottom: '1px solid #e5e7eb', paddingBottom: '15px' }}>
+                    Select all specific tasks the customer is requesting to accurately scope the service.
+                </p>
+                
+                {/* Scrollable Grid Area */}
+                <div style={{maxHeight: '400px', overflowY: 'auto', paddingRight: '15px'}}>
+                    <div style={styles.subcategoryGrid}>
+                        {subcategories.map(sub => (
+                            <SubcategoryCard key={sub.name} subcategory={sub}
+                                isSelected={tempSelection.includes(sub.name)} onClick={toggleSelection} />
+                        ))}
+                    </div>
+                </div>
+
+                {/* Footer Action Area */}
+                <div style={{ ...styles.selectedSubList, marginTop: '30px' }}>
+                    <p style={{ fontWeight: '700', color: '#4f46e5', marginBottom: '10px' }}>
+                        Selected Items ({tempSelection.length}):
+                    </p>
+                    <div style={{ display: 'flex', flexWrap: 'wrap', gap: '8px', minHeight: '30px' }}>
+                        {tempSelection.length > 0 ? (
+                            tempSelection.map(name => (
+                                <span key={name} style={{
+                                    backgroundColor: '#4f46e5', color: 'white', padding: '5px 10px',
+                                    borderRadius: '5px', fontSize: '0.85rem', fontWeight: '500',
+                                    display: 'flex', alignItems: 'center'
+                                }}>
+                                    {name}
+                                </span>
+                            ))
+                        ) : (
+                            <span style={{ color: '#9ca3af', fontStyle: 'italic', fontSize: '0.85rem' }}>
+                                No items selected. Please select tasks before confirming.
+                            </span>
+                        )}
+                    </div>
+                </div>
+
+                <div style={{ display: 'flex', justifyContent: 'flex-end', gap: '16px', paddingTop: '20px', borderTop: '1px solid #e5e7eb', marginTop: '20px' }}>
                     <button style={{ ...styles.buttonSecondary, padding: '10px 20px' }} onClick={onClose}>
-                        <span style={{fontWeight: '500'}}>Go Back / Cancel</span>
+                        <span style={{fontWeight: '500'}}>Go Back</span>
                     </button>
                     <button
                         style={tempSelection.length === 0 ? { ...styles.buttonPrimary, ...styles.buttonDisabled, padding: '10px 20px' } : { ...styles.buttonPrimary, padding: '10px 20px', backgroundColor: '#4f46e5' }}
-                        disabled={tempSelection.length === 0} onClick={handleSave}>
-                        Confirm Selection ({tempSelection.length} Items)
+                        onClick={handleSave}>
+                        Confirm and Save ({tempSelection.length} Items)
                     </button>
                 </div>
             </div>
         </div>
     );
 };
+// --------------------------------------------------------------------------------------
+
 
 const CallContext = ({ ticketId, phoneNumber, requestDetails }) => {
     return (
