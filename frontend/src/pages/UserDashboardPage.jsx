@@ -196,218 +196,202 @@ export default function UserDashboardPage() {
     // --------------------------------------------------------
 const styles = {
     container: {
+        height: '100vh',
         display: 'flex',
         flexDirection: 'column',
-        height: '100vh',
-        fontFamily: '"Inter", system-ui, -apple-system, BlinkMacSystemFont, sans-serif',
-        backgroundColor: '#f9fafb',
-        color: '#0f172a',
+        backgroundColor: '#eef1f5',
+        fontFamily: '"Inter", system-ui, -apple-system, sans-serif',
+        color: '#0b1220',
     },
 
-    /* ================= HEADER ================= */
+    /* ===== SYSTEM BAR ===== */
     header: {
-        height: '64px',
+        height: '56px',
         backgroundColor: '#ffffff',
-        borderBottom: '1px solid #e5e7eb',
+        borderBottom: '1px solid #d6dbe3',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'space-between',
-        padding: '0 32px',
-        zIndex: 10,
+        padding: '0 24px',
     },
     brand: {
-        fontSize: '1rem',
+        fontSize: '0.95rem',
         fontWeight: '700',
-        letterSpacing: '-0.01em',
-        display: 'flex',
-        alignItems: 'center',
-        gap: '10px',
-        color: '#0f172a',
+        letterSpacing: '0.02em',
     },
     headerRight: {
         display: 'flex',
         alignItems: 'center',
-        gap: '24px',
+        gap: '18px',
     },
     clock: {
         fontFamily: 'monospace',
-        fontSize: '0.8rem',
-        color: '#64748b',
+        fontSize: '0.75rem',
+        color: '#475569',
     },
     avatar: {
-        width: '36px',
-        height: '36px',
-        borderRadius: '999px',
-        backgroundColor: '#2563eb',
+        width: '32px',
+        height: '32px',
+        borderRadius: '4px',
+        backgroundColor: '#1e293b',
         color: '#ffffff',
         display: 'flex',
         alignItems: 'center',
         justifyContent: 'center',
         fontWeight: '700',
-        fontSize: '0.8rem',
+        fontSize: '0.75rem',
     },
 
-    /* ================= LAYOUT ================= */
+    /* ===== WORKSPACE ===== */
     main: {
-        display: 'flex',
         flex: 1,
+        display: 'grid',
+        gridTemplateColumns: '300px 1fr',
         overflow: 'hidden',
     },
+
+    /* ===== CONTEXT PANEL ===== */
     sidebar: {
-        width: '340px',
         backgroundColor: '#ffffff',
-        borderRight: '1px solid #e5e7eb',
-        padding: '28px',
+        borderRight: '1px solid #d6dbe3',
+        padding: '20px',
         display: 'flex',
         flexDirection: 'column',
-        gap: '24px',
-        overflowY: 'auto',
-    },
-    contentArea: {
-        flex: 1,
-        padding: '36px',
-        backgroundColor: '#f9fafb',
+        gap: '20px',
         overflowY: 'auto',
     },
 
-    /* ================= CARDS ================= */
+    /* ===== PRIMARY WORK ZONE ===== */
+    contentArea: {
+        backgroundColor: '#eef1f5',
+        padding: '24px',
+        display: 'grid',
+        gridTemplateRows: '1fr auto',
+        gap: '16px',
+    },
+
+    /* ===== PANELS ===== */
     card: {
         backgroundColor: '#ffffff',
-        borderRadius: '12px',
-        padding: '20px',
-        border: '1px solid #e5e7eb',
+        border: '1px solid #d6dbe3',
+        padding: '16px',
     },
 
     title: {
-        fontSize: '1.4rem',
+        fontSize: '1.1rem',
         fontWeight: '700',
-        marginBottom: '20px',
-        letterSpacing: '-0.02em',
+        marginBottom: '12px',
     },
 
-    /* ================= NOTES ================= */
+    /* ===== NOTES (MAIN ASSET) ===== */
     notesTextarea: {
         width: '100%',
-        minHeight: '460px',
-        padding: '20px',
-        fontSize: '0.95rem',
-        lineHeight: '1.6',
-        borderRadius: '10px',
-        border: '1px solid #d1d5db',
+        height: '100%',
+        resize: 'none',
+        border: 'none',
         outline: 'none',
+        padding: '18px',
+        fontSize: '0.9rem',
+        lineHeight: '1.6',
         fontFamily: 'inherit',
         backgroundColor: '#ffffff',
     },
 
-    /* ================= INFO ================= */
+    /* ===== INFO ===== */
     userInfoTitle: {
-        fontSize: '0.75rem',
+        fontSize: '0.65rem',
+        letterSpacing: '0.1em',
         fontWeight: '700',
         color: '#64748b',
-        letterSpacing: '0.08em',
+        marginBottom: '10px',
         textTransform: 'uppercase',
-        marginBottom: '12px',
     },
     infoRow: {
         display: 'flex',
         justifyContent: 'space-between',
-        padding: '8px 0',
-        fontSize: '0.85rem',
+        fontSize: '0.8rem',
+        padding: '6px 0',
     },
     infoKey: {
         color: '#64748b',
     },
     infoVal: {
         fontWeight: '600',
-        color: '#0f172a',
     },
     subscriptionBadge: {
-        backgroundColor: '#e0f2fe',
-        color: '#0369a1',
-        padding: '4px 10px',
-        borderRadius: '999px',
-        fontSize: '0.7rem',
+        backgroundColor: '#e2e8f0',
+        color: '#1e293b',
+        padding: '2px 8px',
+        fontSize: '0.65rem',
         fontWeight: '700',
     },
 
     phoneNumberDisplay: {
         fontFamily: 'monospace',
-        fontWeight: '600',
-        fontSize: '0.85rem',
         backgroundColor: '#f1f5f9',
-        padding: '4px 8px',
-        borderRadius: '6px',
+        padding: '2px 6px',
+        fontSize: '0.75rem',
     },
 
-    /* ================= ADDRESS ================= */
+    /* ===== ADDRESS ===== */
     addressItem: {
-        padding: '12px',
-        borderRadius: '8px',
-        border: '1px solid #e5e7eb',
+        padding: '10px',
+        border: '1px solid #d6dbe3',
         cursor: 'pointer',
-        fontSize: '0.85rem',
-        backgroundColor: '#ffffff',
+        fontSize: '0.8rem',
     },
     addressSelected: {
-        borderColor: '#2563eb',
-        backgroundColor: '#eff6ff',
+        backgroundColor: '#f1f5f9',
         fontWeight: '600',
     },
 
-    /* ================= ORDERS ================= */
+    /* ===== ORDERS ===== */
     orderCard: {
-        border: '1px solid #fecaca',
-        backgroundColor: '#fff5f5',
-        borderRadius: '10px',
-        padding: '14px',
-        marginBottom: '12px',
+        border: '1px solid #fca5a5',
+        backgroundColor: '#fff1f2',
+        padding: '10px',
+        marginBottom: '8px',
     },
     orderHeader: {
         display: 'flex',
         justifyContent: 'space-between',
-        fontSize: '0.75rem',
+        fontSize: '0.7rem',
         fontWeight: '700',
-        color: '#991b1b',
-        marginBottom: '6px',
+        color: '#7f1d1d',
     },
     cancelBtn: {
         width: '100%',
-        backgroundColor: '#dc2626',
+        marginTop: '6px',
+        padding: '6px',
+        backgroundColor: '#b91c1c',
         color: '#ffffff',
         border: 'none',
-        padding: '8px',
-        borderRadius: '6px',
-        fontSize: '0.75rem',
-        fontWeight: '700',
+        fontSize: '0.7rem',
         cursor: 'pointer',
-        marginTop: '8px',
     },
 
-    /* ================= ACTION ================= */
+    /* ===== ACTION STRIP ===== */
     saveButton: {
-        padding: '12px 28px',
-        borderRadius: '10px',
-        border: 'none',
-        backgroundColor: '#2563eb',
+        padding: '10px 22px',
+        backgroundColor: '#1e293b',
         color: '#ffffff',
-        fontSize: '0.9rem',
+        border: 'none',
+        fontSize: '0.8rem',
         fontWeight: '700',
         cursor: 'pointer',
     },
     message: {
-        marginRight: '16px',
-        fontSize: '0.85rem',
+        marginRight: '12px',
+        fontSize: '0.75rem',
         fontWeight: '600',
     },
     emptyState: {
         textAlign: 'center',
+        fontSize: '0.75rem',
         color: '#64748b',
-        fontSize: '0.85rem',
-        padding: '16px 0',
-        fontStyle: 'italic',
+        padding: '10px',
     },
 };
-
 
     // --------------------------------------------------------
 
@@ -545,6 +529,7 @@ const styles = {
         </div>
     );
 }
+
 
 
 
