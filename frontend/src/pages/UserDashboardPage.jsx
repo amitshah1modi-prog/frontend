@@ -620,3 +620,5 @@ export default function UserDashboardPage() {
         </div>
     );
 }
+
+export UserDashboardPage ;
