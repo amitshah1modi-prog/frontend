@@ -176,7 +176,8 @@ const fetchAgentAdminId = async (firebaseUid) => {
     }
 };
 
-export function ServiceManSelectionPage() {
+function ServiceManSelectionPage() 
+ {
     const location = useLocation();
     const navigate = useNavigate();
 
